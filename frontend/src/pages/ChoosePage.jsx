@@ -9,7 +9,7 @@ export default function ChoosePage() {
     <div className="choose-container">
       <div className="choose-card">
         <div className="choose-header">
-          <button className="return-btn" onClick={() => navigate("/library")}>
+          <button className="return-btn" onClick={() => {}}>
             Return to My Library
           </button>
         </div>
@@ -19,13 +19,13 @@ export default function ChoosePage() {
           <div className="button-group">
             <button
               className="story-btn"
-              onClick={() => navigate("/story?mode=custom")}
+              onClick={() => navigate("/story-editor?mode=custom")}
             >
               Choose Your Own Story
             </button>
             <button
               className="story-btn"
-              onClick={() => navigate("/story?mode=ai")}
+              onClick={() => navigate("/story-editor?mode=ai")}
             >
               Generate AI Prompt
             </button>
