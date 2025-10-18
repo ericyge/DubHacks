@@ -81,13 +81,14 @@ WSGI_APPLICATION = 'DubHacks.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dubhacksdb',     # your PostgreSQL database
-        'USER': 'myprojectuser',         # your PostgreSQL user
-        'PASSWORD': 'password123$', # your PostgreSQL password
+        'NAME': 'dubhacks_db',
+        'USER': 'dubhacks_user',
+        'PASSWORD': 'dubhacks_pass',
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
+
 
 
 # Password validation
@@ -131,7 +132,3 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
-CORS_ALLOW_ALL_ORIGINS = True
