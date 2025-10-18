@@ -5,4 +5,4 @@ from django.views import View
 
 class Home(View):    
     def get(self, request):
-        return HttpResponse("This is the GET portal")
+        return HttpResponse("This is NOT the portal")

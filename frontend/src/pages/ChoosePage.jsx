@@ -4,12 +4,31 @@ import { useNavigate } from "react-router-dom";
 
 export default function ChoosePage() {
   const navigate = useNavigate();
+  
+
+  const handleChoice = (mode) => {
+    fetch("http://localhost:8000/api/choose-page/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ mode }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        navigate(`/story-editor?mode=${mode}`); 
+      })
+      .catch((err) => console.error("Error sending choice:", err));
+  };
 
   return (
     <div className="choose-container">
       <div className="choose-card">
         <div className="choose-header">
-          <button className="return-btn" onClick={() => navigate("/")}>
+          <button
+            className="return-btn"
+            onClick={() => navigate("/library")}
+          >
             Return to My Library
           </button>
         </div>
@@ -19,13 +38,13 @@ export default function ChoosePage() {
           <div className="button-group">
             <button
               className="story-btn"
-              onClick={() => navigate("/story-editor?mode=custom")}
+              onClick={() => handleChoice("custom")}
             >
               Choose Your Own Story
             </button>
             <button
               className="story-btn"
-              onClick={() => navigate("/story-editor?mode=ai")}
+              onClick={() => handleChoice("ai")}
             >
               Generate AI Prompt
             </button>
