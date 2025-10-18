@@ -9,7 +9,7 @@ export default function ChoosePage() {
     <div className="choose-container">
       <div className="choose-card">
         <div className="choose-header">
-          <button className="return-btn" onClick={() => {}}>
+          <button className="return-btn" onClick={() => navigate("/")}>
             Return to My Library
           </button>
         </div>

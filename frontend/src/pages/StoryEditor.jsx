@@ -11,7 +11,7 @@ export default function StoryEditor() {
       <div className="story-editor-card">
         {/* Header with return button and menu */}
         <div className="story-editor-header">
-          <button className="return-btn" onClick={() => navigate("/library")}>
+          <button className="return-btn" onClick={() => navigate("/")}>
             Return to My Library
           </button>
           <div className="menu-container">
