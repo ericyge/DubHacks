@@ -1,20 +1,21 @@
-/* Background similar to ChoosePage */
-.halloween-container {
-  background-color: #1a1a1a; /* dark spooky background */
+/* Background matches ChoosePage */
+.story-editor-container {
+  background-color: #0b3d0b; /* forest green */
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 0 200px rgba(255, 140, 0, 0.1);
+  box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.4);
+  position: relative;
 }
 
-/* Central card */
-.halloween-card {
-  background-color: #fff7e6;
-  width: 80%;
-  height: 80vh;
+/* White rounded central card */
+.story-editor-card {
+  background-color: white;
+  width: 90%;
+  height: 90vh;
   border-radius: 24px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -22,39 +23,94 @@
   position: relative;
 }
 
-/* Header with title and menu */
-.halloween-header {
+/* Header (top bar) */
+.story-editor-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  position: relative;
 }
 
-.halloween-title {
+/* Reuse button style from ChoosePage */
+.return-btn {
+  background: none;
+  border: 2px solid #0b3d0b;
+  color: #0b3d0b;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.return-btn:hover {
+  background-color: #0b3d0b;
+  color: white;
+}
+
+/* Center content like ChoosePage */
+.story-editor-content {
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.story-editor-title {
   font-size: 2rem;
-  color: #ff6600; /* orange halloween color */
-  font-family: "Georgia", serif;
+  color: #0b3d0b;
+  margin-bottom: 2rem;
 }
 
-/* Hamburger button */
+/* Bottom buttons (match ChoosePage's style) */
+.bottom-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.story-editor-btn {
+  background-color: #0b3d0b;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.story-editor-btn:hover {
+  background-color: #145214;
+  transform: translateY(-3px);
+}
+
+/* Hamburger menu */
 .hamburger {
-  width: 30px;
-  height: 22px;
+  width: 40px;
+  height: 30px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: stretch;
   cursor: pointer;
   border: none;
-  background: none;
-  padding: 0;
+  background: transparent;
+  padding: 0.5rem;
+  z-index: 1001;
+  position: relative;
 }
 
 .hamburger span {
   display: block;
   height: 3px;
-  background: #ff6600;
+  width: 100%;
+  background: #0b3d0b;
   border-radius: 2px;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .hamburger.active span:nth-child(1) {
@@ -69,62 +125,78 @@
   transform: rotate(-45deg) translateY(-8px);
 }
 
-/* Dropdown menu styling */
+/* Menu container */
 .menu-container {
   position: relative;
 }
 
-.dropdown-menu {
-  position: absolute;
-  top: 35px;
-  right: 0;
+/* Full-screen overlay with blur */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Centered overlay menu */
+.overlay-menu {
   background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  width: 200px;
-  z-index: 10;
+  gap: 0;
+  min-width: 300px;
+  overflow: hidden;
+  animation: slideIn 0.3s ease;
 }
 
-.dropdown-menu button {
+@keyframes slideIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.overlay-menu button {
   background: none;
   border: none;
-  padding: 1rem;
-  text-align: left;
-  font-size: 1rem;
-  color: #333;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.dropdown-menu button:hover {
-  background-color: #ff6600;
-  color: white;
-}
-
-/* Bottom buttons */
-.bottom-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 1rem;
-}
-
-.halloween-btn {
-  background-color: #ff6600;
-  color: white;
-  font-size: 1.2rem;
-  font-weight: 600;
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #0b3d0b;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.halloween-btn:hover {
-  background-color: #e65c00;
-  transform: translateY(-3px);
+.overlay-menu button:last-child {
+  border-bottom: none;
+}
+
+.overlay-menu button:hover {
+  background-color: #0b3d0b;
+  color: white;
 }
