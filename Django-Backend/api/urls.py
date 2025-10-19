@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import ChoosePage, StoryEditor, ChoosePagePopup, get_book_title
+from . import views
+from .views import ChoosePage, StoryEditor, ChoosePagePopup, get_book_title, list_books
 
 urlpatterns = [
     path(
@@ -17,6 +18,11 @@ urlpatterns = [
         StoryEditor.as_view(),
         name="storyeditor"
     ),
-        path('api/book-title/<int:branch_id>/', get_book_title),
+    path('book-title/<int:branch_id>/', get_book_title, name="get_book_title"
+    ),
+    path(
+        "books/", views.list_books, name="list_books"
+    ),
+
 
 ]

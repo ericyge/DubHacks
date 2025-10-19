@@ -1,14 +1,38 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./../styles/StoryEditor.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function StoryEditor() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [storyText, setStoryText] = useState("");
   const [turns, setTurns] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [bookTitle, setBookTitle] = useState("Loading title...");
   const textareaRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Helper to extract query params
+  const getQueryParam = (param) => {
+    return new URLSearchParams(location.search).get(param);
+  };
+
+  useEffect(() => {
+    const branchId = getQueryParam("branch_id");
+    if (!branchId) return;
+
+    // Fetch the book title from backend
+    fetch(`http://localhost:8000/api/book-title/${branchId}/`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch title");
+        return res.json();
+      })
+      .then((data) => setBookTitle(data.book_title))
+      .catch((err) => {
+        console.error("Error fetching title:", err);
+        setBookTitle("Untitled Story");
+      });
+  }, [location.search]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +49,6 @@ export default function StoryEditor() {
     setStoryText("");
     setIsProcessing(true);
 
-    // Simulate user image generation
     await delay(600);
     setTurns((prev) =>
       prev.map((t) =>
@@ -33,10 +56,7 @@ export default function StoryEditor() {
       )
     );
 
-    // Wait for image "load" before generating AI response
     await delay(800);
-
-    // Simulate AI text response
     setTurns((prev) =>
       prev.map((t) =>
         t.id === newTurn.id
@@ -65,7 +85,7 @@ export default function StoryEditor() {
             <button className="return-btn" onClick={() => navigate("/")}>
               Return to My Library
             </button>
-            <h1 className="story-editor-title">The night of Halloween...</h1>
+            <h1 className="story-editor-title">{bookTitle}</h1>
           </div>
 
           <div className="menu-container">
@@ -87,7 +107,6 @@ export default function StoryEditor() {
               <div key={t.id} className="story-line-block fade-in-up">
                 <div className="turn-wrapper">
                   <div className="line user-text">{t.userText}</div>
-
                   <div className="image-placeholder-wrapper">
                     {t.userImage ? (
                       <div className="image-placeholder">[User Image Placeholder]</div>
@@ -95,8 +114,6 @@ export default function StoryEditor() {
                       <div className="image-placeholder empty" />
                     )}
                   </div>
-
-
                   <div className="line ai-text">
                     {t.aiText || <span className="empty-line">&nbsp;</span>}
                   </div>
@@ -114,13 +131,8 @@ export default function StoryEditor() {
                 placeholder="Continue the story..."
                 rows={1}
                 style={{ lineHeight: "32px" }}
-
               />
-              <button
-                className="submit-btn"
-                type="submit"
-                disabled={isProcessing}
-              >
+              <button className="submit-btn" type="submit" disabled={isProcessing}>
                 Submit
               </button>
             </form>
@@ -138,15 +150,9 @@ export default function StoryEditor() {
       {menuOpen && (
         <div className="menu-overlay" onClick={() => setMenuOpen(false)}>
           <div className="overlay-menu" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => navigate("/ChoosePage")}>
-              Return to Menu
-            </button>
-            <button onClick={() => navigate("/sidequest/new")}>
-              Start a SideQuest
-            </button>
-            <button onClick={() => alert("Exporting to PDF...")}>
-              Export to PDF
-            </button>
+            <button onClick={() => navigate("/ChoosePage")}>Return to Menu</button>
+            <button onClick={() => navigate("/sidequest/new")}>Start a SideQuest</button>
+            <button onClick={() => alert("Exporting to PDF...")}>Export to PDF</button>
           </div>
         </div>
       )}

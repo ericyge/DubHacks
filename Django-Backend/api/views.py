@@ -91,3 +91,18 @@ def get_book_title(request, branch_id):
         })
     except Branch.DoesNotExist:
         return Response({"error": "Branch not found"}, status=404)
+    
+
+    
+@api_view(['GET'])
+def list_books(request):
+    books = Book.objects.all().order_by('-created_at')
+    data = [
+        {
+            "id": book.id,
+            "title": book.title,
+            "created_at": book.created_at,
+        }
+        for book in books
+    ]
+    return Response(data)
