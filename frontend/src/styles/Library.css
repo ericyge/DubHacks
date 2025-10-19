@@ -131,7 +131,7 @@
   display: flex;
   justify-content: flex-start;
   align-items: flex-end; /* align books to the bottom of the row */
-  gap: 1rem;
+  gap: 4.5rem; /* increased horizontal space between books */
   padding: 1.5rem 2rem 0; /* add top padding so books don't touch the top shelf */
   margin-bottom: 0;
   position: relative;
@@ -159,6 +159,11 @@
   justify-content: center;
   padding: 0.6rem; /* a bit more breathing room for larger text */
   margin-bottom: 0; /* ensure no extra bottom gap is added by the spine inner */
+  align-items: center;       /* center vertically */
+  justify-content: center;   /* center horizontally (title area) */
+  padding: 0.6rem;
+  overflow: visible;
+  box-sizing: border-box;
 }
 
 .book-spine:hover .book-spine-inner {
@@ -166,34 +171,129 @@
   box-shadow: 0 12px 24px rgba(20, 82, 20, 0.6);
 }
 
+/* ---------- Spine Decorations (two styles) ---------- */
+
+/* Base adjustments so title sits centered in the decorative "panel" */
+.book-spine-inner {
+  display: flex;
+  align-items: center;       /* center vertically */
+  justify-content: center;   /* center horizontally (title area) */
+  position: relative;
+  padding: 0.6rem;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+/* Title should sit centered inside the decorative inner area */
 .book-spine-title {
   color: white;
   font-family: Georgia, serif;
-  font-size: 1.2rem; /* larger title text on the spine */
+  font-size: 1.2rem;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: center;
   line-height: 1.2;
   position: relative;
-  z-index: 1;
+  z-index: 3; /* above decorations */
+  padding: 0.25rem 0.5rem;
+  background: transparent;
 }
 
-/* Glow Effect */
-.book-glow {
+/* --- Style 1: ornate gold inner frame with top/bottom motifs --- */
+.book-spine-inner.spine-style-1 {
+  /* keep book color visible as main fill; decorations via pseudo elements */
+  overflow: visible;
+}
+
+/* thin gold frame inset */
+.book-spine-inner.spine-style-1::before {
+  content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-  opacity: 0;
-  transition: opacity 0.3s;
+  inset: 8% 6%; /* leave inner "pane" for title */
+  border: 3px solid rgba(212, 175, 55, 0.95); /* gold */
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 1;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset;
 }
 
-.book-spine:hover .book-glow {
-  opacity: 1;
+/* top motif */
+.book-spine-inner.spine-style-1::after {
+  content: "";
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 10%;
+  background:
+    linear-gradient(90deg, rgba(212,175,55,0.95) 0 10%, transparent 10% 90%, rgba(212,175,55,0.95) 90% 100%);
+  z-index: 1;
+  border-radius: 2px;
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+/* subtle corner accents (small squares) */
+.book-spine-inner.spine-style-1 .book-glow { z-index: 2; }
+
+/* --- Style 2: geometric frame with gold corner bars --- */
+.book-spine-inner.spine-style-2 {
+  overflow: visible;
+}
+
+/* outer decorative stripes using multiple linear-gradients */
+.book-spine-inner.spine-style-2::before {
+  content: "";
+  position: absolute;
+  inset: 6% 4%;
+  border-radius: 4px;
+  background:
+    linear-gradient(0deg, rgba(0,0,0,0.06), rgba(0,0,0,0.02)),
+    linear-gradient(90deg, rgba(212,175,55,0.95) 0 6%, transparent 6% 94%, rgba(212,175,55,0.95) 94% 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* decorative horizontal band in middle (gives the "empty" central plaque area feel) */
+.book-spine-inner.spine-style-2::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72%;
+  height: 48%;
+  border-radius: 3px;
+  border-left: 3px solid rgba(212,175,55,0.95);
+  border-right: 3px solid rgba(212,175,55,0.95);
+  z-index: 1;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* increase contrast of title area so it sits inside the "plaque" */
+.book-spine-inner.spine-style-2 .book-spine-title {
+  z-index: 3;
+  padding: 0.2rem 0.6rem;
+}
+
+/* ensure glows/hover remain above decorations */
+.book-spine-inner .book-glow {
+  z-index: 2;
+}
+
+/* Hover effect should still lift whole spine without clipping decorations */
+.book-spine:hover .book-spine-inner {
+  transform: translateY(-6px);
+  transition: transform 0.28s ease;
+}
+
+/* Mobile adjustments keep design readable */
+@media (max-width: 640px) {
+  .book-spine-title { font-size: 1rem; }
+  .book-spine { width: 80px; }
+  .book-spine-inner.spine-style-1::before,
+  .book-spine-inner.spine-style-2::before { inset: 8% 6%; }
 }
 
 /* Book Popup Overlay */
@@ -478,6 +578,22 @@
   pointer-events: none;
 }
 
+/* Prevent text caret / I-beam when clicking books */
+.book-spine,
+.book-spine-inner,
+.book-spine-title {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Let the parent handle pointer interaction so hover/click still work */
+.book-spine-title {
+  pointer-events: none;
+  cursor: inherit; /* keep pointer from .book-spine */
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .chapters-grid {
@@ -504,7 +620,7 @@
   }
 
   .books-row {
-    gap: 0.5rem;
+    gap: rem;
   }
 
   /* keep mobile slightly narrower but readable */

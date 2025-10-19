@@ -10,6 +10,10 @@ export default function Library() {
   const [isClosing, setIsClosing] = useState(false);
   const [bookHeights, setBookHeights] = useState({});
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+  const [spineDesigns, setSpineDesigns] = useState({});
+
+  // how many books per shelf (increase to show more books per row)
+  const perShelf = 8; // change to 6/8/10 depending on desired density
 
   // Mock data - will be replaced with database data
   const mockBooks = [
@@ -55,10 +59,17 @@ export default function Library() {
     { id: 40, title: "Samurai Legend", color: "#8B0000", chapters: 15 },
   ];
 
-  const booksPerShelf = 4;
+  // group into shelves
+  // If the user has typed into the search bar, show only titles that start with the query
+  // (case-insensitive). Otherwise show all books. Then split into shelves of size `perShelf`.
+  const query = searchQuery.trim().toLowerCase();
+  const booksToShow = query
+    ? mockBooks.filter((b) => b.title.toLowerCase().startsWith(query))
+    : mockBooks;
+
   const shelves = [];
-  for (let i = 0; i < mockBooks.length; i += booksPerShelf) {
-    shelves.push(mockBooks.slice(i, i + booksPerShelf));
+  for (let i = 0; i < booksToShow.length; i += perShelf) {
+    shelves.push(booksToShow.slice(i, i + perShelf));
   }
 
   const handleBookClick = (book) => {
@@ -106,6 +117,17 @@ export default function Library() {
       (_, i) => start + i + 1
     );
   };
+
+  // generate/design assignment once (deterministic per id)
+  useEffect(() => {
+    const designs = {};
+    mockBooks.forEach((b, i) => {
+      // deterministic-ish assignment by id (so it doesn't reshuffle on re-render)
+      const seed = b.id;
+      designs[b.id] = seed % 2 === 0 ? "spine-style-1" : "spine-style-2";
+    });
+    setSpineDesigns(designs);
+  }, [/* run once */]);
 
   // generate natural-looking random heights for each book once
   useEffect(() => {
@@ -205,24 +227,27 @@ export default function Library() {
 
             {/* Books */}
             <div className="books-row">
-              {shelf.map((book) => (
-                <div
-                  key={book.id}
-                  onClick={() => handleBookClick(book)}
-                  className="book-spine"
-                >
-                  <div
-                    className="book-spine-inner"
-                    style={{
-                      backgroundColor: book.color,
-                      height: bookHeights[book.id] || "16rem", // fallback
-                    }}
-                  >
-                   <p className="book-spine-title">{book.title}</p>
-                   <div className="book-glow" />
-                 </div>
-               </div>
-             ))}
+              {shelf.map((book) => {
+                 const designClass = spineDesigns[book.id] || "spine-style-1";
+                 return (
+                   <div
+                     key={book.id}
+                     onClick={() => handleBookClick(book)}
+                     className="book-spine"
+                   >
+                     <div
+                       className={`book-spine-inner ${designClass}`}
+                       style={{
+                         backgroundColor: book.color,
+                         height: bookHeights[book.id] || "16rem", // fallback
+                       }}
+                     >
+                       <p className="book-spine-title">{book.title}</p>
+                       <div className="book-glow" />
+                     </div>
+                   </div>
+                 );
+               })}
             </div>
 
             {/* Bottom Shelf */}
@@ -233,6 +258,13 @@ export default function Library() {
           </div>
         ))}
       </div>
+
+      {/* No results message when a search yields nothing */}
+      {query && booksToShow.length === 0 && (
+        <div style={{ textAlign: "center", marginTop: "2rem", color: "#fff" }}>
+          No books match "{searchQuery}"
+        </div>
+      )}
 
       {/* Scroll Indicator */}
       <div
