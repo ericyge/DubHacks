@@ -81,6 +81,28 @@
   overflow: hidden;
 }
 
+/* Submit button that follows cursor */
+.submit-btn {
+  position: absolute;
+  background-color: #0b3d0b;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.submit-btn:hover {
+  background-color: #145214;
+  transform: translateY(-2px);
+}
+
 /* Left margin line */
 .lined-paper::before {
   content: '';
