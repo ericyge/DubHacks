@@ -10,6 +10,7 @@ from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from rest_framework.decorators import api_view
+from google.genai import types
 
 # Create your views here.
 class ChoosePage(APIView):
@@ -47,12 +48,40 @@ class StoryEditor(APIView):
         data = request.data
         client = genai.Client(api_key = "AIzaSyCuE4wOYLY9P7QKKZdiZSG_UvUc2f8jQV8")
 
-        prompt = data.get('Prompt')
+        image_prompt = f"""
+        Create a detailed comic book-style illustration based on the following story description:
+
+        "{data.get('Prompt')}"
+
+        The image should look like a panel from a professional graphic novel — vibrant colors, bold outlines, dynamic composition, and expressive lighting. 
+        Keep characters stylized (not photorealistic), and ensure the visual storytelling matches the mood and tone of the description. 
+        Do not include text, captions, or speech bubbles — focus only on the scene itself.
+        """
+
+
+        text_prompt = f"""
+        You are a creative comic book storyteller. 
+
+        The user has written part of a story. Based on the following input, write a short continuation that fits the tone and setting of the story.
+
+        User's input:
+        "{data.get('Prompt')}"
+
+        Your task:
+        1. Write 1-2 short sentences continuing the story naturally, as if it's the next panel in a comic book. Do not add in panel descriptions. Simply continue the story in plain text only.
+        2. Begin your response with a vivid description of the scene that could match an illustrated comic panel.
+        3. Keep the tone consistent with the user's writing style.
+        4. Make it imaginative and visually rich, but concise — like comic narration. Also keep the vocabulary simple enough for elementary schoolers to understand without trouble.
+        5. Do not repeat the user's text verbatim.
+        6. Avoid dialogue unless it adds to the pacing.
+
+        Output only the new text continuation.
+        """
         branch = Branch.objects.get(pk=branch_pk)
 
         response = client.models.generate_content(
             model="gemini-2.5-flash-image",
-            contents=[prompt],
+            contents=[image_prompt],
         )
 
         image_file = None
@@ -69,9 +98,19 @@ class StoryEditor(APIView):
                 except Exception as e:
                     print(f"Error in getting image: {e}")
         
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[text_prompt],
+            config=types.GenerateContentConfig(
+                thinking_config=types.ThinkingConfig(thinking_budget=0) # Disables thinking
+            ),
+        )
+
+        text = response.text
+
         entry = StoryEntry.objects.create(
             branch = branch,
-            text=prompt,
+            text=data.get('Prompt'),
             image=image_file  # assign the ContentFile here
         )
 
@@ -80,6 +119,7 @@ class StoryEditor(APIView):
         return Response({
             "status": "success",
             "image_url": image_url,
+            "text": text,
         })
 
 

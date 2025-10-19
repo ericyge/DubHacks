@@ -113,7 +113,7 @@ export default function StoryEditor() {
             ? {
                 ...t,
                 userImage: data.image_url,
-                aiText: "The story continues...",
+                aiText: data.text,
               }
             : t
         )
