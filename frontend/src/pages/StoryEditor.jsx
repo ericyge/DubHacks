@@ -9,7 +9,11 @@ export default function StoryEditor() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [bookTitle, setBookTitle] = useState("Loading title...");
   const textareaRef = useRef(null);
+  const [submitHover, setSubmitHover] = useState(false);
+  const linedPaperRef = useRef(null);
+  const [lineMetrics, setLineMetrics] = useState({ lineHeight: 32, lineOffset: 8 });
   const navigate = useNavigate();
+<<<<<<< Updated upstream
   const location = useLocation();
 
   // Helper to extract query params
@@ -33,6 +37,48 @@ export default function StoryEditor() {
         setBookTitle("Untitled Story");
       });
   }, [location.search]);
+=======
+  
+  // Insert newline on Enter (plain Enter) and allow submit with Ctrl/Cmd+Enter
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      // Ctrl/Cmd + Enter -> submit
+      if (e.ctrlKey || e.metaKey) {
+        // allow form submit to proceed (or call handleSubmit programmatically)
+        return;
+      }
+
+      // Plain Enter -> insert newline into the textarea and prevent form submission
+      e.preventDefault();
+      const ta = textareaRef.current;
+      if (!ta) return;
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      const before = storyText.slice(0, start);
+      const after = storyText.slice(end);
+      const newValue = before + "\n" + after;
+      setStoryText(newValue);
+      // place cursor after the inserted newline
+      requestAnimationFrame(() => {
+        ta.selectionStart = ta.selectionEnd = start + 1;
+      });
+    }
+  };
+
+  // Auto-resize textarea to fit content, preventing internal scrolling
+  const adjustTextareaHeight = () => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    ta.style.height = "auto"; // reset
+    // add a small extra so the caret isn't cut off
+    ta.style.height = Math.max(32, ta.scrollHeight) + "px";
+  };
+
+  // adjust whenever storyText changes
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [storyText]);
+>>>>>>> Stashed changes
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,6 +122,25 @@ export default function StoryEditor() {
     return new Promise((res) => setTimeout(res, ms));
   }
 
+  // Measure CSS variables from the lined paper so we can snap heights to exact line multiples
+  useEffect(() => {
+    const measure = () => {
+      const el = linedPaperRef.current;
+      if (!el) return;
+      const cs = window.getComputedStyle(el);
+      // CSS variable might be set as '32px' — parseFloat will extract the number
+      const lhVar = cs.getPropertyValue('--line-height') || cs.lineHeight || '32px';
+      const loVar = cs.getPropertyValue('--line-offset') || '8px';
+      const lineHeight = parseFloat(lhVar) || 32;
+      const lineOffset = parseFloat(loVar) || 8;
+      setLineMetrics({ lineHeight, lineOffset });
+    };
+
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
   return (
     <div className="story-editor-container">
       <div className="story-editor-card">
@@ -102,14 +167,27 @@ export default function StoryEditor() {
 
         {/* Lined paper area */}
         <div className="story-editor-content">
-          <div className="lined-paper">
+          <div className="lined-paper" ref={linedPaperRef}>
             {turns.map((t) => (
               <div key={t.id} className="story-line-block fade-in-up">
                 <div className="turn-wrapper">
                   <div className="line user-text">{t.userText}</div>
                   <div className="image-placeholder-wrapper">
                     {t.userImage ? (
-                      <div className="image-placeholder">[User Image Placeholder]</div>
+                      (() => {
+                        // compute placeholder height in px snapped to whole lines
+                        const lh = lineMetrics.lineHeight || 32;
+                        const desiredLines = 4; // make image 4 lines tall by default
+                        const heightPx = Math.round(desiredLines * lh);
+                        return (
+                          <div
+                            className="image-placeholder"
+                            style={{ height: `${heightPx}px` }}
+                          >
+                            [User Image Placeholder]
+                          </div>
+                        );
+                      })()
                     ) : (
                       <div className="image-placeholder empty" />
                     )}
@@ -128,11 +206,23 @@ export default function StoryEditor() {
                 className="story-line-input"
                 value={storyText}
                 onChange={(e) => setStoryText(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="Continue the story..."
                 rows={1}
                 style={{ lineHeight: "32px" }}
               />
+<<<<<<< Updated upstream
               <button className="submit-btn" type="submit" disabled={isProcessing}>
+=======
+              <button
+                className="submit-btn"
+                type="submit"
+                disabled={isProcessing}
+                onMouseEnter={() => setSubmitHover(true)}
+                onMouseLeave={() => setSubmitHover(false)}
+                style={{ backgroundColor: submitHover ? "#FFBDBD" : undefined }}
+              >
+>>>>>>> Stashed changes
                 Submit
               </button>
             </form>

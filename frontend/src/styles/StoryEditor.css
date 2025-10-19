@@ -2,7 +2,7 @@
    STORY EDITOR MAIN LAYOUT
 =================================*/
 .story-editor-container {
-  background-color: #0b3d0b; /* forest green */
+  background-color: #FFA4A4; /* forest green */
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -51,7 +51,7 @@
   transition: all 0.3s;
 }
 .return-btn:hover {
-  background-color: #FFBDBD;
+  background-color: #FFA4A4;
   color: #fff;
 }
 
@@ -70,18 +70,23 @@
 .lined-paper {
   flex-grow: 1;
   background-color: #fffef7;
+  /* use variables so line metrics are consistent across elements */
+  --line-height: 32px;
+  --line-offset: 8px; /* top padding so text aligns with ruled lines */
   background-image: repeating-linear-gradient(
     transparent,
-    transparent 31px,
-    #e0dfd8 31px,
-    #e0dfd8 32px
+    transparent calc(var(--line-height) - 1px),
+    #e0dfd8 calc(var(--line-height) - 1px),
+    #e0dfd8 var(--line-height)
   );
-  background-size: 100% 32px;
+  background-size: 100% var(--line-height);
+  background-position: 0 var(--line-offset);
   border-radius: 8px;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow-y: auto;
   background-attachment: local; /* lines move with scroll */
+  padding-top: var(--line-offset);
 }
 
 /* Red margin line - FIXED */
@@ -107,8 +112,8 @@
   resize: none;
   font-family: 'Courier New', monospace;
   font-size: 1.1rem;
-  line-height: 32px;
-  padding: 8px 2rem 8px 80px;
+  line-height: var(--line-height);
+  padding: calc(var(--line-offset)) 2rem calc(var(--line-offset)) 80px;
   color: #2c2c2c;
   overflow-y: auto;
 }
@@ -122,7 +127,7 @@
 =================================*/
 .story-editor-title {
   font-size: 2rem;
-  color: #0b3d0b;
+  color: #FFA4A4;
   margin: 0;
   text-align: left;
 }
@@ -134,7 +139,7 @@
 }
 
 .story-editor-btn {
-  background-color: #0b3d0b;
+  background-color: #FFA4A4;
   color: #fff;
   font-size: 1.2rem;
   font-weight: 600;
@@ -146,7 +151,7 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 .story-editor-btn:hover {
-  background-color: #145214;
+  background-color: #FFBDBD;
   transform: translateY(-3px);
 }
 
@@ -170,7 +175,7 @@
   display: block;
   height: 3px;
   width: 100%;
-  background: #0b3d0b;
+  background: #FFA4A4;
   border-radius: 2px;
   transition: all 0.3s ease;
 }
@@ -258,11 +263,13 @@
 /* Image placeholder */
 .image-placeholder {
   width: 400px;
-  height: 225px;
+  /* reduce placeholder height to 4 lines (multiple of the line height) */
+  height: calc(var(--line-height) * 4);
   background-color: #ccc;
   border: 2px dashed #bbb;
   border-radius: 8px;
-  margin: 0.5rem 0 0.5rem 80px;
+  /* top spacing zero, bottom spacing equals one line so following text lines up */
+  margin: 0 0 var(--line-height) 80px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,7 +294,8 @@
    STORY INPUT & SUBMIT
 =================================*/
 .story-line-block {
-  margin-bottom: 1rem;
+  /* keep block spacing aligned to the paper's line height */
+  margin-bottom: var(--line-height);
   position: relative;
   padding-left: 60px;
 }
@@ -295,11 +303,26 @@
 .line.user-text,
 .line.ai-text,
 .story-line-input {
-  display: inline-block;
-  line-height: 32px;
+  /* make these block-level so each occupies whole line slots and aligns with background */
+  display: block;
+  line-height: var(--line-height);
   padding-left: 80px;
   font-family: 'Courier New', monospace;
   color: #2c2c2c;
+  margin: 0; /* reset default margins */
+  white-space: pre-wrap; /* preserve user-entered newlines */
+  word-break: break-word; /* avoid overflow on long words */
+}
+
+.turn-wrapper {
+  display: block;
+  margin: 0;
+}
+
+/* ensure empty-line placeholder takes one text line so alignment is preserved */
+.empty-line {
+  display: inline-block;
+  height: var(--line-height);
 }
 
 .line-input-row {
@@ -317,11 +340,12 @@
   background: transparent;
   font-size: 1rem;
   resize: none;
+  overflow: hidden; /* allow JS to expand height without inner scroll */
 }
 
 /* Submit button */
 .submit-btn {
-  background-color: #0b3d0b;
+  background-color: #FFA4A4;
   color: white;
   border: none;
   padding: 0.4rem 1rem;
@@ -335,7 +359,7 @@
   margin-right: 0.5rem;
 }
 .submit-btn:hover {
-  background-color: #145214;
+  background-color: #FFBDBD !important;
   transform: translateY(-2px);
 }
 .submit-btn:disabled {
