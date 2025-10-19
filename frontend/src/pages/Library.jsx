@@ -84,7 +84,7 @@ export default function Library() {
       setSelectedBook(null);
       setCurrentPage(0);
       setIsClosing(false);
-    }, 300); // Match animation duration
+    }, 300);
   };
 
   const chaptersPerPage = 6;
@@ -118,6 +118,7 @@ export default function Library() {
     );
   };
 
+<<<<<<< Updated upstream
   // generate/design assignment once (deterministic per id)
   useEffect(() => {
     const designs = {};
@@ -130,27 +131,27 @@ export default function Library() {
   }, [/* run once */]);
 
   // generate natural-looking random heights for each book once
+=======
+>>>>>>> Stashed changes
   useEffect(() => {
-    const minRem = 13; // minimum book height in rem
-    const maxRem = 18; // maximum book height in rem
+    const minRem = 13;
+    const maxRem = 18;
     const heights = {};
     mockBooks.forEach((b) => {
       const val = (Math.random() * (maxRem - minRem) + minRem).toFixed(2);
       heights[b.id] = `${val}rem`;
     });
     setBookHeights(heights);
-  }, []); // run once on mount
+  }, []);
 
-  // show/hide scroll indicator based on page position (and when a book popup is open)
   useEffect(() => {
     const checkScroll = () => {
       const atBottom =
         window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 48; // 48px threshold
+        document.documentElement.scrollHeight - 48;
       setShowScrollIndicator(!atBottom && !selectedBook);
     };
 
-    // run once to set initial state
     checkScroll();
     window.addEventListener("scroll", checkScroll, { passive: true });
     window.addEventListener("resize", checkScroll);
@@ -227,6 +228,7 @@ export default function Library() {
 
             {/* Books */}
             <div className="books-row">
+<<<<<<< Updated upstream
               {shelf.map((book) => {
                  const designClass = spineDesigns[book.id] || "spine-style-1";
                  return (
@@ -248,6 +250,26 @@ export default function Library() {
                    </div>
                  );
                })}
+=======
+              {shelf.map((book) => (
+                <div
+                  key={book.id}
+                  onClick={() => handleBookClick(book)}
+                  className="book-spine"
+                >
+                  <div
+                    className="book-spine-inner"
+                    style={{
+                      backgroundColor: book.color,
+                      height: bookHeights[book.id] || "16rem",
+                    }}
+                  >
+                   <p className="book-spine-title">{book.title}</p>
+                   <div className="book-glow" />
+                 </div>
+               </div>
+             ))}
+>>>>>>> Stashed changes
             </div>
 
             {/* Bottom Shelf */}
@@ -282,7 +304,11 @@ export default function Library() {
         <div className={`book-popup-overlay ${isClosing ? "closing" : ""}`}>
           <div className="book-popup">
             {/* Close Button */}
-            <button onClick={handleCloseBook} className="close-btn">
+            <button 
+              onClick={handleCloseBook} 
+              className="close-btn"
+              style={{ backgroundColor: selectedBook.color }}
+            >
               <svg
                 width="24"
                 height="24"
@@ -298,16 +324,41 @@ export default function Library() {
 
             {/* Book Title */}
             <div className="book-popup-header">
-              <h2 className="book-popup-title">{selectedBook.title}</h2>
+              <h2 
+                className="book-popup-title"
+                style={{ color: selectedBook.color }}
+              >
+                {selectedBook.title}
+              </h2>
             </div>
 
             {/* Chapters Grid */}
             <div className="chapters-container">
               <div className="chapters-grid">
                 {getCurrentChapters().map((chapterNum) => (
-                  <div key={chapterNum} className="chapter-box">
-                    <h3 className="chapter-title">Chapter {chapterNum}</h3>
-                    <p className="chapter-subtitle">Click to read...</p>
+                  <div 
+                    key={chapterNum} 
+                    className="chapter-box"
+                    style={{ borderColor: selectedBook.color }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = selectedBook.color;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f9f9f9';
+                    }}
+                  >
+                    <h3 
+                      className="chapter-title"
+                      style={{ color: selectedBook.color }}
+                    >
+                      Chapter {chapterNum}
+                    </h3>
+                    <p 
+                      className="chapter-subtitle"
+                      style={{ color: selectedBook.color }}
+                    >
+                      Click to read...
+                    </p>
                   </div>
                 ))}
               </div>
@@ -319,6 +370,9 @@ export default function Library() {
                 onClick={prevPage}
                 disabled={currentPage === 0}
                 className={`nav-btn ${currentPage === 0 ? "disabled" : ""}`}
+                style={{ 
+                  backgroundColor: currentPage === 0 ? undefined : selectedBook.color 
+                }}
               >
                 <svg
                   width="24"
@@ -332,7 +386,10 @@ export default function Library() {
                 </svg>
               </button>
 
-              <span className="page-counter">
+              <span 
+                className="page-counter"
+                style={{ color: selectedBook.color }}
+              >
                 Page {currentPage + 1} of {totalPages}
               </span>
 
@@ -342,6 +399,9 @@ export default function Library() {
                 className={`nav-btn ${
                   currentPage === totalPages - 1 ? "disabled" : ""
                 }`}
+                style={{ 
+                  backgroundColor: currentPage === totalPages - 1 ? undefined : selectedBook.color 
+                }}
               >
                 <svg
                   width="24"

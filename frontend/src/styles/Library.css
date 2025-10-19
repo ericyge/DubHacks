@@ -1,7 +1,7 @@
 /* Main Container - Forest Green Background */
 .library-container {
   min-height: 100vh;
-  background-color: #0b3d0b;
+  background-color: #BADFDB;
   padding: 2rem;
   box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.4);
 }
@@ -16,7 +16,7 @@
   margin-bottom: 3rem;
   padding: 2rem;
   margin: -2rem -2rem 3rem -2rem;
-  background-color: #0b3d0b;
+  background-color: #FFA4A4;
   box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.4);
   z-index: 100;
 }
@@ -41,7 +41,7 @@
 .search-input {
   padding: 0.5rem 1rem 0.5rem 2.5rem;
   border-radius: 10px;
-  background-color: white;
+  background-color: #FFBDBD;
   color: #0b3d0b;
   border: 2px solid #0b3d0b;
   width: 16rem;
@@ -73,7 +73,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: #0b3d0b;
+  background-color: #B6AE9F;
   color: white;
   padding: 0.6rem 1.5rem;
   border-radius: 10px;
@@ -85,7 +85,7 @@
 }
 
 .new-story-btn:hover {
-  background-color: #145214;
+  background-color: #B6AE9F;
   transform: translateY(-3px);
 }
 
@@ -110,14 +110,14 @@
 .shelf-wood {
   width: 100%;
   height: 2rem;
-  background: linear-gradient(to bottom, #4a2511 0%, #2d1810 100%);
+  background: linear-gradient(to bottom, #FCF9EA 0%, #dedbca 100%);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .shelf-base {
   width: 100%;
   height: 1rem;
-  background-color: #1a0f08;
+  background-color: #dedbca;
 }
 
 /* Bottom Shelf */
@@ -168,7 +168,7 @@
 
 .book-spine:hover .book-spine-inner {
   transform: translateY(-6px); /* slightly reduce upward lift so hover won't hit the top shelf */
-  box-shadow: 0 12px 24px rgba(20, 82, 20, 0.6);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
 }
 
 /* ---------- Spine Decorations (two styles) ---------- */
@@ -392,7 +392,7 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background-color: #0b3d0b;
+  /* background-color will be set inline to match book color */
   color: white;
   border: none;
   border-radius: 50%;
@@ -402,18 +402,17 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, opacity 0.3s;
   z-index: 10;
 }
 
 .close-btn:hover {
-  background-color: #145214;
+  opacity: 0.8;
 }
 
 /* Book Popup Header */
 .book-popup-header {
   background-color: white;
-  color: #0b3d0b;
   padding: 2rem 1.5rem 1rem 1.5rem;
   border-radius: 24px 24px 0 0;
 }
@@ -423,7 +422,7 @@
   font-family: Georgia, serif;
   text-align: center;
   margin: 0;
-  color: #0b3d0b;
+  /* color will be set inline to match book color */
 }
 
 /* Chapters Container */
@@ -442,7 +441,8 @@
 /* Chapter Box */
 .chapter-box {
   background-color: #f9f9f9;
-  border: 2px solid #0b3d0b;
+  border: 2px solid;
+  /* border-color will be set inline to match book color */
   border-radius: 10px;
   padding: 1.5rem;
   cursor: pointer;
@@ -450,7 +450,7 @@
 }
 
 .chapter-box:hover {
-  background-color: #0b3d0b;
+  /* background-color will be set inline to match book color */
   color: white;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   transform: translateY(-2px);
@@ -459,17 +459,17 @@
 .chapter-title {
   font-size: 1.25rem;
   font-family: Georgia, serif;
-  color: #0b3d0b;
+  /* color will be set inline to match book color */
   margin: 0 0 0.5rem 0;
   transition: color 0.3s;
 }
 
 .chapter-box:hover .chapter-title {
-  color: white;
+  color: white !important;
 }
 
 .chapter-subtitle {
-  color: #0b3d0b;
+  /* color will be set inline to match book color */
   font-size: 0.875rem;
   margin: 0;
   opacity: 0.7;
@@ -477,7 +477,7 @@
 }
 
 .chapter-box:hover .chapter-subtitle {
-  color: white;
+  color: white !important;
   opacity: 0.9;
 }
 
@@ -497,7 +497,7 @@
   padding: 0.75rem;
   border-radius: 50%;
   border: none;
-  background-color: #0b3d0b;
+  /* background-color will be set inline to match book color */
   color: white;
   cursor: pointer;
   transition: all 0.3s;
@@ -507,7 +507,7 @@
 }
 
 .nav-btn:hover:not(.disabled) {
-  background-color: #145214;
+  opacity: 0.8;
   transform: translateY(-2px);
 }
 
@@ -519,7 +519,7 @@
 
 /* Page Counter */
 .page-counter {
-  color: #0b3d0b;
+  /* color will be set inline to match book color */
   font-weight: 600;
 }
 
