@@ -139,6 +139,12 @@ export default function Library() {
   }, [books]);
 
   useEffect(() => {
+    // If there's only one shelf worth of books, never show the scroll indicator
+    if (!books || books.length <= perShelf || selectedBook) {
+      setShowScrollIndicator(false);
+      return;
+    }
+
     const checkScroll = () => {
       const atBottom =
         window.innerHeight + window.scrollY >=
@@ -153,7 +159,7 @@ export default function Library() {
       window.removeEventListener("scroll", checkScroll);
       window.removeEventListener("resize", checkScroll);
     };
-  }, [selectedBook]);
+  }, [selectedBook, books.length, perShelf]);
 
   const scrollToBottom = () => {
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
