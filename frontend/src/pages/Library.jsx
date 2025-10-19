@@ -84,7 +84,7 @@ export default function Library() {
       setSelectedBook(null);
       setCurrentPage(0);
       setIsClosing(false);
-    }, 300);
+    }, 300); // Match animation duration
   };
 
   const chaptersPerPage = 6;
@@ -118,7 +118,6 @@ export default function Library() {
     );
   };
 
-<<<<<<< Updated upstream
   // generate/design assignment once (deterministic per id)
   useEffect(() => {
     const designs = {};
@@ -131,8 +130,6 @@ export default function Library() {
   }, [/* run once */]);
 
   // generate natural-looking random heights for each book once
-=======
->>>>>>> Stashed changes
   useEffect(() => {
     const minRem = 13;
     const maxRem = 18;
@@ -228,7 +225,6 @@ export default function Library() {
 
             {/* Books */}
             <div className="books-row">
-<<<<<<< Updated upstream
               {shelf.map((book) => {
                  const designClass = spineDesigns[book.id] || "spine-style-1";
                  return (
@@ -250,26 +246,6 @@ export default function Library() {
                    </div>
                  );
                })}
-=======
-              {shelf.map((book) => (
-                <div
-                  key={book.id}
-                  onClick={() => handleBookClick(book)}
-                  className="book-spine"
-                >
-                  <div
-                    className="book-spine-inner"
-                    style={{
-                      backgroundColor: book.color,
-                      height: bookHeights[book.id] || "16rem",
-                    }}
-                  >
-                   <p className="book-spine-title">{book.title}</p>
-                   <div className="book-glow" />
-                 </div>
-               </div>
-             ))}
->>>>>>> Stashed changes
             </div>
 
             {/* Bottom Shelf */}
