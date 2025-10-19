@@ -14,6 +14,8 @@ export default function StoryEditor() {
   const [lineMetrics, setLineMetrics] = useState({ lineHeight: 32, lineOffset: 8 });
   const navigate = useNavigate();
   const location = useLocation();
+  const [storyEnded, setStoryEnded] = useState(false);
+  const [showCongrats, setShowCongrats] = useState(false);
 
   // Helper to extract query params
   const getQueryParam = (param) => {
@@ -36,17 +38,13 @@ export default function StoryEditor() {
         setBookTitle("Untitled Story");
       });
   }, [location.search]);
-  
+
   // Insert newline on Enter (plain Enter) and allow submit with Ctrl/Cmd+Enter
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      // Ctrl/Cmd + Enter -> submit
       if (e.ctrlKey || e.metaKey) {
-        // allow form submit to proceed (or call handleSubmit programmatically)
         return;
       }
-
-      // Plain Enter -> insert newline into the textarea and prevent form submission
       e.preventDefault();
       const ta = textareaRef.current;
       if (!ta) return;
@@ -56,30 +54,27 @@ export default function StoryEditor() {
       const after = storyText.slice(end);
       const newValue = before + "\n" + after;
       setStoryText(newValue);
-      // place cursor after the inserted newline
       requestAnimationFrame(() => {
         ta.selectionStart = ta.selectionEnd = start + 1;
       });
     }
   };
 
-  // Auto-resize textarea to fit content, preventing internal scrolling
+  // Auto-resize textarea
   const adjustTextareaHeight = () => {
     const ta = textareaRef.current;
     if (!ta) return;
-    ta.style.height = "auto"; // reset
-    // add a small extra so the caret isn't cut off
+    ta.style.height = "auto";
     ta.style.height = Math.max(32, ta.scrollHeight) + "px";
   };
 
-  // adjust whenever storyText changes
   useEffect(() => {
     adjustTextareaHeight();
   }, [storyText]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!storyText.trim() || isProcessing) return;
+    if (!storyText.trim() || isProcessing || storyEnded) return;
 
     const newTurn = {
       id: Date.now(),
@@ -95,18 +90,20 @@ export default function StoryEditor() {
     try {
       const branchId = getQueryParam("branch_id");
 
-      const response = await fetch(`http://localhost:8000/api/story-editor/?branch_id=${branchId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ Prompt: storyText }),
-      });
+      const response = await fetch(
+        `http://localhost:8000/api/story-editor/?branch_id=${branchId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ Prompt: storyText }),
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to generate image");
       const data = await response.json();
 
-      // Update turn with image
       setTurns((prev) =>
         prev.map((t) =>
           t.id === newTurn.id
@@ -132,27 +129,33 @@ export default function StoryEditor() {
     }
   };
 
-  function delay(ms) {
-    return new Promise((res) => setTimeout(res, ms));
-  }
+  // End story handler
+  const handleEndStory = () => {
+    setStoryEnded(true);
+    setShowCongrats(true);
 
-  // Measure CSS variables from the lined paper so we can snap heights to exact line multiples
+    setTimeout(() => {
+      setShowCongrats(false);
+      navigate("/");
+    }, 2500);
+  };
+
+  // Measure CSS variables
   useEffect(() => {
     const measure = () => {
       const el = linedPaperRef.current;
       if (!el) return;
       const cs = window.getComputedStyle(el);
-      // CSS variable might be set as '32px' — parseFloat will extract the number
-      const lhVar = cs.getPropertyValue('--line-height') || cs.lineHeight || '32px';
-      const loVar = cs.getPropertyValue('--line-offset') || '8px';
+      const lhVar = cs.getPropertyValue("--line-height") || cs.lineHeight || "32px";
+      const loVar = cs.getPropertyValue("--line-offset") || "8px";
       const lineHeight = parseFloat(lhVar) || 32;
       const lineOffset = parseFloat(loVar) || 8;
       setLineMetrics({ lineHeight, lineOffset });
     };
 
     measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, []);
 
   return (
@@ -215,25 +218,35 @@ export default function StoryEditor() {
                 placeholder="Continue the story..."
                 rows={1}
                 style={{ lineHeight: "32px" }}
+                disabled={storyEnded}
               />
-              <button
-                className="submit-btn"
-                type="submit"
-                disabled={isProcessing}
-                onMouseEnter={() => setSubmitHover(true)}
-                onMouseLeave={() => setSubmitHover(false)}
-                style={{ backgroundColor: submitHover ? "#FFBDBD" : undefined }}
-              >
-                Submit
-              </button>
+              {!storyEnded && (
+                <button
+                  className="submit-btn"
+                  type="submit"
+                  disabled={isProcessing}
+                  onMouseEnter={() => setSubmitHover(true)}
+                  onMouseLeave={() => setSubmitHover(false)}
+                  style={{
+                    backgroundColor: submitHover ? "#FFBDBD" : undefined,
+                  }}
+                >
+                  Submit
+                </button>
+              )}
             </form>
           </div>
         </div>
 
         {/* Bottom buttons */}
         <div className="bottom-buttons">
-          <button className="story-editor-btn">The End</button>
-          <button className="story-editor-btn">To Be Continued</button>
+          <button
+            className="story-editor-btn"
+            onClick={handleEndStory}
+            disabled={storyEnded}
+          >
+            The End
+          </button>
         </div>
       </div>
 
@@ -242,8 +255,21 @@ export default function StoryEditor() {
         <div className="menu-overlay" onClick={() => setMenuOpen(false)}>
           <div className="overlay-menu" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => navigate("/choose-page")}>Return to Menu</button>
-            <button onClick={() => navigate("/sidequest/new")}>Start a SideQuest</button>
-            <button onClick={() => alert("Exporting to PDF...")}>Export to PDF</button>
+            <button onClick={() => navigate("/sidequest/new")}>
+              Start a SideQuest
+            </button>
+            <button onClick={() => alert("Exporting to PDF...")}>
+              Export to PDF
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Congrats overlay */}
+      {showCongrats && (
+        <div className="congrats-overlay">
+          <div className="congrats-message">
+            🎉 Congratulations on finishing an exciting adventure! 🎉
           </div>
         </div>
       )}

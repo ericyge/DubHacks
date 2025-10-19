@@ -375,3 +375,39 @@
   margin: 8px 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
+
+
+.congrats-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.4s ease;
+}
+
+.congrats-message {
+  background: #FFA4A4;
+  color: white;
+  padding: 2rem 3rem;
+  border-radius: 16px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: popIn 0.4s ease;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
