@@ -10,11 +10,8 @@ from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from rest_framework.decorators import api_view
-<<<<<<< Updated upstream
 from google.genai import types
-=======
 from django.http import JsonResponse
->>>>>>> Stashed changes
 
 # Create your views here.
 class ChoosePage(APIView):

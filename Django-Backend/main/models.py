@@ -12,7 +12,7 @@ class Book(models.Model):
 
 class Branch(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="branches")
-    name = models.CharField(max_length=200, null=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
