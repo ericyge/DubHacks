@@ -15,13 +15,13 @@ class ChoosePage(APIView):
             "next": f"/story-editor?mode={mode}" 
         })
     
-class StoryEditor(APIView):
-    def get(self, request):
-        data = request.data
+# class StoryEditor(APIView):
+#     def get(self, request):
+#         data = request.data
 
-        mode = data.get('mode')
+#         mode = data.get('mode')
 
-        return Response({
-            "status": mode
-        })
+#         return Response({
+#             "status": mode
+#         })
 

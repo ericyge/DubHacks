@@ -7,19 +7,31 @@ export default function ChoosePage() {
   
 
   const handleChoice = (mode) => {
-    fetch("http://localhost:8000/api/choose-page/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ mode }),
+  fetch("http://localhost:8000/api/choose-page/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ mode }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Network response was not ok");
+      return res.json();
     })
-      .then((res) => res.json())
-      .then((data) => {
-        navigate(`/story-editor?mode=${mode}`); 
-      })
-      .catch((err) => console.error("Error sending choice:", err));
-  };
+    .then((data) => {
+      // Navigate to the URL returned by Django
+      if (data.status === "success" && data.next) {
+        navigate(data.next);
+      } else {
+        console.warn("No next URL provided by backend, fallback to default");
+        navigate(`/story-editor?mode=${mode}`);
+      }
+    })
+    .catch((err) => {
+      console.error("Error sending choice:", err);
+    });
+};
+
 
   return (
     <div className="choose-container">

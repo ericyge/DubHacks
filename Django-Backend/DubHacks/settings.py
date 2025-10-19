@@ -132,3 +132,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# CORS settings for local development
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+# OR, temporarily:
+# CORS_ALLOW_ALL_ORIGINS = True

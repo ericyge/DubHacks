@@ -9,7 +9,7 @@ function App() {
     <Router>
       <Routes>
         {/* ChoosePage route */}
-        <Route path="/ChoosePage" element={<ChoosePage />} />
+        <Route path="/choose-page" element={<ChoosePage />} />
 
         {/* Story Editor route */}
         <Route path="/story-editor" element={<StoryEditor />} />

@@ -103,7 +103,7 @@ export default function Library() {
 
           {/* New Story Button */}
           <button
-            onClick={() => navigate("/ChoosePage")}
+            onClick={() => navigate("/choose-page")}
             className="new-story-btn"
           >
             <svg
