@@ -1,58 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./../styles/StoryEditor.css";
 import { useNavigate } from "react-router-dom";
 
 export default function StoryEditor() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [storyText, setStoryText] = useState("");
-  const [buttonPosition, setButtonPosition] = useState({ top: 40, left: 80 });
-  const textareaRef = React.useRef(null);
+  const [turns, setTurns] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const textareaRef = useRef(null);
   const navigate = useNavigate();
 
-  const updateButtonPosition = () => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!storyText.trim() || isProcessing) return;
 
-    const cursorPos = textarea.selectionStart;
-    const textBeforeCursor = storyText.substring(0, cursorPos);
-    const lines = textBeforeCursor.split('\n');
-    const currentLine = lines.length;
-    
-    // Calculate position based on line number
-    // Line height is 32px, starting at 8px padding
-    const top = 8 + (currentLine * 32);
-    
-    // Keep button at left margin
-    const left = 80;
-    
-    setButtonPosition({ top, left });
+    const newTurn = {
+      id: Date.now(),
+      userText: storyText.trim(),
+      userImage: null,
+      aiText: null,
+    };
+
+    setTurns((prev) => [...prev, newTurn]);
+    setStoryText("");
+    setIsProcessing(true);
+
+    // Simulate user image generation
+    await delay(600);
+    setTurns((prev) =>
+      prev.map((t) =>
+        t.id === newTurn.id ? { ...t, userImage: "placeholder" } : t
+      )
+    );
+
+    // Wait for image "load" before generating AI response
+    await delay(800);
+
+    // Simulate AI text response
+    setTurns((prev) =>
+      prev.map((t) =>
+        t.id === newTurn.id
+          ? {
+              ...t,
+              aiText:
+                "The night deepened, and the candles flickered softly under the full moon.",
+            }
+          : t
+      )
+    );
+
+    setIsProcessing(false);
   };
 
-  const handleTextChange = (e) => {
-    setStoryText(e.target.value);
-  };
-
-  const handleKeyUp = () => {
-    updateButtonPosition();
-  };
-
-  const handleClick = () => {
-    updateButtonPosition();
-  };
-
-  const handleSubmit = () => {
-    console.log("Story submitted:", storyText);
-    alert("Story submitted!");
-  };
-
-  React.useEffect(() => {
-    updateButtonPosition();
-  }, [storyText]);
+  function delay(ms) {
+    return new Promise((res) => setTimeout(res, ms));
+  }
 
   return (
     <div className="story-editor-container">
       <div className="story-editor-card">
-        {/* Header with return button and menu */}
+        {/* Header */}
         <div className="story-editor-header">
           <div className="header-left">
             <button className="return-btn" onClick={() => navigate("/")}>
@@ -60,6 +67,7 @@ export default function StoryEditor() {
             </button>
             <h1 className="story-editor-title">The night of Halloween...</h1>
           </div>
+
           <div className="menu-container">
             <button
               className={`hamburger ${menuOpen ? "active" : ""}`}
@@ -72,29 +80,44 @@ export default function StoryEditor() {
           </div>
         </div>
 
-        {/* Main content */}
+        {/* Lined paper area */}
         <div className="story-editor-content">
           <div className="lined-paper">
-            <textarea
-              ref={textareaRef}
-              className="story-textarea"
-              value={storyText}
-              onChange={handleTextChange}
-              onKeyUp={handleKeyUp}
-              onClick={handleClick}
-              placeholder="Once upon a time..."
-              spellCheck="true"
-            />
-            <button 
-              className="submit-btn"
-              onClick={handleSubmit}
-              style={{
-                top: `${buttonPosition.top}px`,
-                left: `${buttonPosition.left}px`
-              }}
-            >
-              Submit
-            </button>
+            {turns.map((t) => (
+              <div key={t.id} className="story-line-block fade-in-up">
+                {/* User line */}
+                <div className="line user-text">{t.userText}</div>
+
+                {/* User image only */}
+                {t.userImage && (
+                  <div className="image-placeholder">
+                    [User Image Placeholder]
+                  </div>
+                )}
+
+                {/* AI line */}
+                {t.aiText && <div className="line ai-text">{t.aiText}</div>}
+              </div>
+            ))}
+
+            {/* Input line */}
+            <form className="line-input-row" onSubmit={handleSubmit}>
+              <textarea
+                ref={textareaRef}
+                className="story-line-input"
+                value={storyText}
+                onChange={(e) => setStoryText(e.target.value)}
+                placeholder="Continue the story..."
+                rows={1}
+              />
+              <button
+                className="submit-btn"
+                type="submit"
+                disabled={isProcessing}
+              >
+                Submit
+              </button>
+            </form>
           </div>
         </div>
 
@@ -105,7 +128,7 @@ export default function StoryEditor() {
         </div>
       </div>
 
-      {/* Full-screen overlay menu */}
+      {/* Overlay menu */}
       {menuOpen && (
         <div className="menu-overlay" onClick={() => setMenuOpen(false)}>
           <div className="overlay-menu" onClick={(e) => e.stopPropagation()}>

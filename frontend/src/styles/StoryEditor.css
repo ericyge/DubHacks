@@ -1,4 +1,6 @@
-/* Background matches ChoosePage */
+/* ===============================
+   STORY EDITOR MAIN LAYOUT
+=================================*/
 .story-editor-container {
   background-color: #0b3d0b; /* forest green */
   min-height: 100vh;
@@ -9,9 +11,8 @@
   position: relative;
 }
 
-/* White rounded central card */
 .story-editor-card {
-  background-color: white;
+  background-color: #fff;
   width: 90%;
   height: 90vh;
   border-radius: 24px;
@@ -23,7 +24,9 @@
   position: relative;
 }
 
-/* Header (top bar) */
+/* ===============================
+   HEADER
+=================================*/
 .story-editor-header {
   display: flex;
   justify-content: space-between;
@@ -37,7 +40,6 @@
   align-items: flex-start;
 }
 
-/* Reuse button style from ChoosePage */
 .return-btn {
   background: none;
   border: 2px solid #0b3d0b;
@@ -48,13 +50,14 @@
   cursor: pointer;
   transition: all 0.3s;
 }
-
 .return-btn:hover {
   background-color: #0b3d0b;
-  color: white;
+  color: #fff;
 }
 
-/* Center content like ChoosePage */
+/* ===============================
+   CONTENT AREA
+=================================*/
 .story-editor-content {
   flex-grow: 1;
   display: flex;
@@ -63,7 +66,7 @@
   overflow: hidden;
 }
 
-/* Lined paper container */
+/* Lined paper background */
 .lined-paper {
   flex-grow: 1;
   background-color: #fffef7;
@@ -76,34 +79,12 @@
   background-size: 100% 32px;
   border-radius: 8px;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 0;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  background-attachment: local; /* lines move with scroll */
 }
 
-/* Submit button that follows cursor */
-.submit-btn {
-  position: absolute;
-  background-color: #0b3d0b;
-  color: white;
-  border: none;
-  padding: 0.4rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.1s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  pointer-events: auto;
-}
-
-.submit-btn:hover {
-  background-color: #145214;
-  transform: translateY(-2px);
-}
-
-/* Left margin line */
+/* Red margin line */
 .lined-paper::before {
   content: '';
   position: absolute;
@@ -114,7 +95,7 @@
   background-color: #f4c2c2;
 }
 
-/* Story textarea */
+/* Text area */
 .story-textarea {
   width: 100%;
   height: 100%;
@@ -129,12 +110,14 @@
   color: #2c2c2c;
   overflow-y: auto;
 }
-
 .story-textarea::placeholder {
   color: #a0a0a0;
   font-style: italic;
 }
 
+/* ===============================
+   TITLES & BUTTONS
+=================================*/
 .story-editor-title {
   font-size: 2rem;
   color: #0b3d0b;
@@ -142,7 +125,6 @@
   text-align: left;
 }
 
-/* Bottom buttons (match ChoosePage's style) */
 .bottom-buttons {
   display: flex;
   justify-content: center;
@@ -151,7 +133,7 @@
 
 .story-editor-btn {
   background-color: #0b3d0b;
-  color: white;
+  color: #fff;
   font-size: 1.2rem;
   font-weight: 600;
   padding: 1rem 2rem;
@@ -161,13 +143,14 @@
   transition: all 0.3s;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
-
 .story-editor-btn:hover {
   background-color: #145214;
   transform: translateY(-3px);
 }
 
-/* Hamburger menu */
+/* ===============================
+   HAMBURGER MENU
+=================================*/
 .hamburger {
   width: 40px;
   height: 30px;
@@ -180,9 +163,7 @@
   background: transparent;
   padding: 0.5rem;
   z-index: 1001;
-  position: relative;
 }
-
 .hamburger span {
   display: block;
   height: 3px;
@@ -190,33 +171,21 @@
   background: #0b3d0b;
   border-radius: 2px;
   transition: all 0.3s ease;
-  flex-shrink: 0;
 }
-
 .hamburger.active span:nth-child(1) {
   transform: rotate(45deg) translateY(8px);
 }
-
 .hamburger.active span:nth-child(2) {
   opacity: 0;
 }
-
 .hamburger.active span:nth-child(3) {
   transform: rotate(-45deg) translateY(-8px);
 }
 
-/* Menu container */
-.menu-container {
-  position: relative;
-}
-
-/* Full-screen overlay with blur */
+/* Menu overlay */
 .menu-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   display: flex;
@@ -225,45 +194,31 @@
   z-index: 1000;
   animation: fadeIn 0.3s ease;
 }
-
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Centered overlay menu */
+/* Overlay content */
 .overlay-menu {
   background: white;
   border-radius: 16px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  gap: 0;
   min-width: 300px;
   overflow: hidden;
   animation: slideIn 0.3s ease;
 }
-
 @keyframes slideIn {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .overlay-menu button {
   background: none;
   border: none;
   padding: 1.5rem 2rem;
-  text-align: center;
   font-size: 1.1rem;
   font-weight: 500;
   color: #0b3d0b;
@@ -271,12 +226,116 @@
   transition: all 0.3s;
   border-bottom: 1px solid #e0e0e0;
 }
-
 .overlay-menu button:last-child {
   border-bottom: none;
 }
-
 .overlay-menu button:hover {
   background-color: #0b3d0b;
+  color: #fff;
+}
+
+/* ===============================
+   STORY TURN (AI + USER + IMAGES)
+=================================*/
+.story-turn {
+  margin: 1.5rem 0;
+  padding-left: 80px;
+}
+
+.user-message {
+  color: #000;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+.ai-message {
+  color: #002b66;
+  font-weight: 500;
+  margin: 1rem 0 0.5rem;
+}
+
+/* Image placeholder */
+.image-placeholder {
+  width: 400px;
+  height: 250px;
+  background-color: #ccc;
+  border: 2px dashed #bbb;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  color: #666;
+  font-family: 'Courier New', monospace;
+  font-style: italic;
+}
+
+/* Fade animation */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.35s ease-out forwards;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===============================
+   STORY INPUT & SUBMIT
+=================================*/
+.story-line-block {
+  margin-bottom: 1rem;
+  position: relative;
+  padding-left: 60px;
+}
+
+.line.user-text,
+.line.ai-text,
+.story-line-input {
+  display: inline-block;
+  line-height: 32px;
+  padding-left: 80px;
+  font-family: 'Courier New', monospace;
+  color: #2c2c2c;
+}
+
+.line-input-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-left: 60px;
+}
+
+.story-line-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  resize: none;
+}
+
+/* Submit button */
+.submit-btn {
+  background-color: #0b3d0b;
   color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 0.5rem;
+}
+.submit-btn:hover {
+  background-color: #145214;
+  transform: translateY(-2px);
+}
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
