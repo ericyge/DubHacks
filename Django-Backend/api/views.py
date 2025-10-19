@@ -198,3 +198,42 @@ class StoryEntriesView(APIView):
             for entry in entries
         ]
         return Response(serialized)
+    
+
+class CreateSideQuest(APIView):
+    def post(self, request):
+        data = request.data
+        self.book = Book.objects.get(pk=data.get('book_id'))
+        self.name = data.get("name")
+        self.num_frames = data.get("frames_to_keep")
+
+        self.create_new_sidequests()
+
+        return Response({
+            "status": "success"
+        })
+    
+    def create_new_sidequests(self):
+        new_branch = Branch.objects.create(
+            book = self.book,
+            name = self.name,
+        )
+
+        original_branch = Branch.objects.get(book=self.book, name="Original")
+
+        if self.num_frames > original_branch.entries.count():
+            self.num_frames = original_branch.entries.count()
+        
+        original_entries = (
+            original_branch.entries.all().order_by("id")[:self.num_frames]
+        )
+
+        for entry in original_entries:
+            StoryEntry.objects.create(
+                branch=new_branch,
+                text=entry.text,
+                image=entry.image,
+                ai_text=entry.ai_text,
+                # Copy any other fields your StoryEntry model has:
+                # e.g. "order", "choice_text", etc.
+            )

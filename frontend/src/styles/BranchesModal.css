@@ -16,6 +16,7 @@
   border-radius: 12px;
   padding: 18px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  position: relative;
 }
 
 .branches-modal-header {
@@ -82,4 +83,91 @@
   text-align: center;
   color: #666;
   padding: 20px 0;
+}
+
+.create-sidequest-btn {
+  position: static; /* no absolute positioning */
+  background-color: #6a5acd;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.create-sidequest-btn:hover {
+  background-color: #7b68ee;
+  transform: translateY(-2px);
+}
+
+.create-sidequest-btn:active {
+  transform: translateY(0);
+}
+
+.sidequest-controls {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(255,255,255,0.95), rgba(255,255,255,0.4));
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  z-index: 5;
+}
+
+/* When input form is shown */
+.create-sidequest-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.create-sidequest-form input {
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  width: 180px;
+}
+
+.create-sidequest-form input[type="number"] {
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+
+.confirm-btn,
+.cancel-btn {
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.confirm-btn {
+  background-color: #6a5acd;
+  color: white;
+  border: none;
+}
+
+.confirm-btn:hover {
+  background-color: #7b68ee;
+}
+
+.cancel-btn {
+  background-color: #ccc;
+  border: none;
+}
+
+.cancel-btn:hover {
+  background-color: #bbb;
 }
