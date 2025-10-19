@@ -84,15 +84,17 @@
   background-attachment: local; /* lines move with scroll */
 }
 
-/* Red margin line */
+/* Red margin line - FIXED */
 .lined-paper::before {
   content: '';
-  position: absolute;
+  position: sticky;
+  float: left;
   left: 60px;
   top: 0;
-  bottom: 0;
+  height: 100%;
   width: 2px;
   background-color: #f4c2c2;
+  margin-right: -2px;
 }
 
 /* Text area */
@@ -260,7 +262,7 @@
   background-color: #ccc;
   border: 2px dashed #bbb;
   border-radius: 8px;
-  margin: 0.5rem 0;
+  margin: 0.5rem 0 0.5rem 80px;
   display: flex;
   align-items: center;
   justify-content: center;

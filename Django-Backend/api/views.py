@@ -25,3 +25,15 @@ class ChoosePage(APIView):
 #             "status": mode
 #         })
 
+class SaveButton(APIView):
+    def post(self, request):
+        data = request.data
+        
+        title = data.get('title')
+        print(f"Title: {title}")
+
+        return Response({
+            "status": "success",
+            "title": title
+        })
+
