@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./../styles/StoryEditor.css";
 import { useNavigate, useLocation } from "react-router-dom";
+import jsPDF from "jspdf";
 
 export default function StoryEditor() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,15 +19,13 @@ export default function StoryEditor() {
   const [showCongrats, setShowCongrats] = useState(false);
 
   // Helper to extract query params
-  const getQueryParam = (param) => {
-    return new URLSearchParams(location.search).get(param);
-  };
+  const getQueryParam = (param) => new URLSearchParams(location.search).get(param);
 
+  // Fetch book title
   useEffect(() => {
     const branchId = getQueryParam("branch_id");
     if (!branchId) return;
 
-    // Fetch the book title from backend
     fetch(`http://localhost:8000/api/book-title/${branchId}/`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch title");
@@ -39,12 +38,10 @@ export default function StoryEditor() {
       });
   }, [location.search]);
 
-  // Insert newline on Enter (plain Enter) and allow submit with Ctrl/Cmd+Enter
+  // Handle Enter key
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      if (e.ctrlKey || e.metaKey) {
-        return;
-      }
+      if (e.ctrlKey || e.metaKey) return;
       e.preventDefault();
       const ta = textareaRef.current;
       if (!ta) return;
@@ -67,11 +64,9 @@ export default function StoryEditor() {
     ta.style.height = "auto";
     ta.style.height = Math.max(32, ta.scrollHeight) + "px";
   };
+  useEffect(() => adjustTextareaHeight(), [storyText]);
 
-  useEffect(() => {
-    adjustTextareaHeight();
-  }, [storyText]);
-
+  // Submit story
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!storyText.trim() || isProcessing || storyEnded) return;
@@ -94,9 +89,7 @@ export default function StoryEditor() {
         `http://localhost:8000/api/story-editor/?branch_id=${branchId}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ Prompt: storyText }),
         }
       );
@@ -107,11 +100,7 @@ export default function StoryEditor() {
       setTurns((prev) =>
         prev.map((t) =>
           t.id === newTurn.id
-            ? {
-                ...t,
-                userImage: data.image_url,
-                aiText: data.text,
-              }
+            ? { ...t, userImage: data.image_url, aiText: data.text }
             : t
         )
       );
@@ -119,9 +108,7 @@ export default function StoryEditor() {
       console.error("Error submitting story:", err);
       setTurns((prev) =>
         prev.map((t) =>
-          t.id === newTurn.id
-            ? { ...t, aiText: "Error generating image." }
-            : t
+          t.id === newTurn.id ? { ...t, aiText: "Error generating image." } : t
         )
       );
     } finally {
@@ -131,6 +118,7 @@ export default function StoryEditor() {
 
   // End story handler
   const handleEndStory = () => {
+    exportToPDF(); // Export PDF when ending story
     setStoryEnded(true);
     setShowCongrats(true);
 
@@ -140,6 +128,74 @@ export default function StoryEditor() {
     }, 2500);
   };
 
+  // PDF export helper
+  const exportToPDF = async () => {
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 10;
+    let y = margin;
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(18);
+    pdf.text(bookTitle, pageWidth / 2, y, { align: "center" });
+    y += 10;
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(12);
+
+    for (const t of turns) {
+      if (y > 260) {
+        pdf.addPage();
+        y = margin;
+      }
+
+      pdf.setFont("helvetica", "bold");
+      pdf.text("You:", margin, y);
+      y += 6;
+      pdf.setFont("helvetica", "normal");
+
+      const userLines = pdf.splitTextToSize(t.userText, pageWidth - 2 * margin);
+      pdf.text(userLines, margin, y);
+      y += userLines.length * 6 + 4;
+
+      if (t.userImage) {
+        try {
+          const img = await loadImage(t.userImage);
+          const imgWidth = pageWidth - 2 * margin;
+          const imgHeight = (img.height * imgWidth) / img.width;
+          if (y + imgHeight > 280) {
+            pdf.addPage();
+            y = margin;
+          }
+          pdf.addImage(img, "PNG", margin, y, imgWidth, imgHeight);
+          y += imgHeight + 6;
+        } catch (err) {
+          console.error("Failed to add image:", err);
+        }
+      }
+
+      pdf.setFont("helvetica", "bold");
+      pdf.text("AI:", margin, y);
+      y += 6;
+      pdf.setFont("helvetica", "normal");
+
+      const aiLines = pdf.splitTextToSize(t.aiText || "No response", pageWidth - 2 * margin);
+      pdf.text(aiLines, margin, y);
+      y += aiLines.length * 6 + 10;
+    }
+
+    pdf.save(`${bookTitle.replace(/\s+/g, "_")}.pdf`);
+  };
+
+  const loadImage = (src) =>
+    new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+
   // Measure CSS variables
   useEffect(() => {
     const measure = () => {
@@ -148,11 +204,8 @@ export default function StoryEditor() {
       const cs = window.getComputedStyle(el);
       const lhVar = cs.getPropertyValue("--line-height") || cs.lineHeight || "32px";
       const loVar = cs.getPropertyValue("--line-offset") || "8px";
-      const lineHeight = parseFloat(lhVar) || 32;
-      const lineOffset = parseFloat(loVar) || 8;
-      setLineMetrics({ lineHeight, lineOffset });
+      setLineMetrics({ lineHeight: parseFloat(lhVar) || 32, lineOffset: parseFloat(loVar) || 8 });
     };
-
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
@@ -161,7 +214,6 @@ export default function StoryEditor() {
   return (
     <div className="story-editor-container">
       <div className="story-editor-card">
-        {/* Header */}
         <div className="story-editor-header">
           <div className="header-left">
             <button className="return-btn" onClick={() => navigate("/")}>
@@ -169,7 +221,6 @@ export default function StoryEditor() {
             </button>
             <h1 className="story-editor-title">{bookTitle}</h1>
           </div>
-
           <div className="menu-container">
             <button
               className={`hamburger ${menuOpen ? "active" : ""}`}
@@ -182,7 +233,6 @@ export default function StoryEditor() {
           </div>
         </div>
 
-        {/* Lined paper area */}
         <div className="story-editor-content">
           <div className="lined-paper" ref={linedPaperRef}>
             {turns.map((t) => (
@@ -191,23 +241,16 @@ export default function StoryEditor() {
                   <div className="line user-text">{t.userText}</div>
                   <div className="image-placeholder-wrapper">
                     {t.userImage ? (
-                      <img
-                        src={t.userImage}
-                        alt="Generated scene"
-                        className="generated-image"
-                      />
+                      <img src={t.userImage} alt="Generated scene" className="generated-image" />
                     ) : (
                       <div className="image-placeholder empty" />
                     )}
                   </div>
-                  <div className="line ai-text">
-                    {t.aiText || <span className="empty-line">&nbsp;</span>}
-                  </div>
+                  <div className="line ai-text">{t.aiText || <span className="empty-line">&nbsp;</span>}</div>
                 </div>
               </div>
             ))}
 
-            {/* Input line */}
             <form className="line-input-row" onSubmit={handleSubmit}>
               <textarea
                 ref={textareaRef}
@@ -227,9 +270,7 @@ export default function StoryEditor() {
                   disabled={isProcessing}
                   onMouseEnter={() => setSubmitHover(true)}
                   onMouseLeave={() => setSubmitHover(false)}
-                  style={{
-                    backgroundColor: submitHover ? "#FFBDBD" : undefined,
-                  }}
+                  style={{ backgroundColor: submitHover ? "#FFBDBD" : undefined }}
                 >
                   Submit
                 </button>
@@ -238,7 +279,6 @@ export default function StoryEditor() {
           </div>
         </div>
 
-        {/* Bottom buttons */}
         <div className="bottom-buttons">
           <button
             className="story-editor-btn"
@@ -250,22 +290,16 @@ export default function StoryEditor() {
         </div>
       </div>
 
-      {/* Overlay menu */}
       {menuOpen && (
         <div className="menu-overlay" onClick={() => setMenuOpen(false)}>
           <div className="overlay-menu" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => navigate("/choose-page")}>Return to Menu</button>
-            <button onClick={() => navigate("/sidequest/new")}>
-              Start a SideQuest
-            </button>
-            <button onClick={() => alert("Exporting to PDF...")}>
-              Export to PDF
-            </button>
+            <button onClick={() => navigate("/sidequest/new")}>Start a SideQuest</button>
+            <button onClick={exportToPDF}>Export to PDF</button>
           </div>
         </div>
       )}
 
-      {/* Congrats overlay */}
       {showCongrats && (
         <div className="congrats-overlay">
           <div className="congrats-message">
