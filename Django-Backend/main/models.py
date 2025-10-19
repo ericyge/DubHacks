@@ -26,6 +26,7 @@ class StoryEntry(models.Model):
     node = models.IntegerField(blank=True, null=True)
     ai_text = models.TextField(default="")
     image = models.ImageField(upload_to='story_images/', blank=True, null=True)
+    context = models.TextField(default="")
 
     def save(self, *args, **kwargs):
         # Only assign if node not manually set

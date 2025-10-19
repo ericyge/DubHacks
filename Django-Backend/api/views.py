@@ -42,9 +42,24 @@ class ChoosePagePopup(APIView):
     
 class StoryEditor(APIView):
     def post(self, request):
-        branch_pk = request.GET.get("branch_id")
-
         data = request.data
+
+        branch_pk = request.GET.get("branch_id")
+        branch = Branch.objects.get(pk=branch_pk)
+
+        entry = StoryEntry.objects.create(
+            branch = branch,
+            text=data.get('Prompt'),
+        )
+        
+        context = ""
+        if entry.node > 1:
+            prev_entry = StoryEntry.objects.get(branch=branch, node=entry.node-1)
+            context = prev_entry.context
+            
+
+        
+
         client = genai.Client(api_key = "AIzaSyCuE4wOYLY9P7QKKZdiZSG_UvUc2f8jQV8")
 
         image_prompt = f"""
@@ -75,8 +90,11 @@ class StoryEditor(APIView):
         6. Avoid dialogue unless it adds to the pacing.
 
         Output only the new text continuation.
+
+        Here is the context for the entire previous conversation: 
+        {context}
         """
-        branch = Branch.objects.get(pk=branch_pk)
+        
 
         response = client.models.generate_content(
             model="gemini-2.5-flash-image",
@@ -106,14 +124,12 @@ class StoryEditor(APIView):
         )
 
         ai_text = response.text
-        print(f"Here is the ai_text: {ai_text}")
 
-        entry = StoryEntry.objects.create(
-            branch = branch,
-            text=data.get('Prompt'),
-            ai_text=ai_text,
-            image=image_file  # assign the ContentFile here
-        )
+        entry.ai_text=ai_text,
+        entry.image=image_file  # assign the ContentFile here
+        entry.context = context + data.get('Prompt') + ai_text
+        entry.save()
+        
 
         image_url = request.build_absolute_uri(entry.image.url)
 
