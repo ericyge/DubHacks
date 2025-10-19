@@ -30,6 +30,13 @@
   align-items: flex-start;
 }
 
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
 /* Reuse button style from ChoosePage */
 .return-btn {
   background: none;
@@ -49,17 +56,68 @@
 
 /* Center content like ChoosePage */
 .story-editor-content {
-  text-align: center;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  padding: 2rem 0;
+  overflow: hidden;
+}
+
+/* Lined paper container */
+.lined-paper {
+  flex-grow: 1;
+  background-color: #fffef7;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    #e0dfd8 31px,
+    #e0dfd8 32px
+  );
+  background-size: 100% 32px;
+  border-radius: 8px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Left margin line */
+.lined-paper::before {
+  content: '';
+  position: absolute;
+  left: 60px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #f4c2c2;
+}
+
+/* Story textarea */
+.story-textarea {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  line-height: 32px;
+  padding: 8px 2rem 8px 80px;
+  color: #2c2c2c;
+  overflow-y: auto;
+}
+
+.story-textarea::placeholder {
+  color: #a0a0a0;
+  font-style: italic;
 }
 
 .story-editor-title {
   font-size: 2rem;
   color: #0b3d0b;
-  margin-bottom: 2rem;
+  margin: 0;
+  text-align: left;
 }
 
 /* Bottom buttons (match ChoosePage's style) */
