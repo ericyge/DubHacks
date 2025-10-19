@@ -7,8 +7,12 @@ from PIL import Image
 from django.conf import settings
 from main.models import StoryEntry, Branch, Book
 from django.core.files.base import ContentFile
+<<<<<<< Updated upstream
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+=======
+from rest_framework.decorators import api_view
+>>>>>>> Stashed changes
 
 # Create your views here.
 class ChoosePage(APIView):
@@ -36,6 +40,8 @@ class ChoosePagePopup(APIView):
             "branch_id": branch.pk
         })
         
+    
+
     
 class StoryEditor(APIView):
     def post(self, request):
@@ -78,3 +84,13 @@ class StoryEditor(APIView):
             "image_url": entry.image.url,
         })
 
+
+@api_view(['GET'])
+def get_book_title(request, branch_id):
+    try:
+        branch = Branch.objects.get(pk=branch_id)
+        return Response({
+            "book_title": branch.book.title
+        })
+    except Branch.DoesNotExist:
+        return Response({"error": "Branch not found"}, status=404)

@@ -42,14 +42,27 @@ export default function ChoosePage() {
     fetch("http://localhost:8000/api/choose-page-popup/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+<<<<<<< Updated upstream
       body: JSON.stringify({ title }),
+=======
+      body: JSON.stringify({ title: title }),
+>>>>>>> Stashed changes
     })
       .then((res) => {
         if (!res.ok) throw new Error("Network response was not ok");
         return res.json();
       })
       .then((data) => {
+<<<<<<< Updated upstream
         navigate(`/story-editor/?book_id=${data.book_id}&branch_id=${data.branch_id}`);
+=======
+        setShowModal(false);
+        if (data.status === "success" && data.id) {
+          navigate(`/story-editor?mode=custom&id=${data.id}&title=${encodeURIComponent(title)}`);
+        } else {
+          navigate(`/story-editor?mode=custom&title=${encodeURIComponent(title)}`);
+        }
+>>>>>>> Stashed changes
       })
       .catch((err) => console.error("Error creating story:", err));
   };
@@ -81,7 +94,7 @@ export default function ChoosePage() {
         <div className="modal-overlay">
           <div className="modal-card">
             <h2>Create Title Name</h2>
-            <textarea
+            <textarea 
               className="title-input"
               value={title}
               onChange={(e) => settitle(e.target.value)}

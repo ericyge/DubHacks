@@ -65,7 +65,7 @@ export default function StoryEditor() {
             <button className="return-btn" onClick={() => navigate("/")}>
               Return to My Library
             </button>
-            <h1 className="story-editor-title">The night of Halloween...</h1>
+            <h1 className="story-editor-title">{bookTitle}</h1>
           </div>
 
           <div className="menu-container">
