@@ -1,6 +1,6 @@
 /* Background of the page */
 .choose-container {
-  background-color: #0b3d0b; /* forest green */
+  background-color: #FFA4A4; /* forest green */
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -29,8 +29,8 @@
 
 .return-btn {
   background: none;
-  border: 2px solid #0b3d0b;
-  color: #0b3d0b;
+  border: 2px solid #FFA4A4;
+  color: #FFA4A4;
   padding: 0.6rem 1.2rem;
   border-radius: 10px;
   font-weight: 600;
@@ -39,7 +39,7 @@
 }
 
 .return-btn:hover {
-  background-color: #0b3d0b;
+  background-color: #FFBDBD;
   color: white;
 }
 
@@ -55,7 +55,7 @@
 .choose-title {
   font-size: 2rem;
   margin-bottom: 2rem;
-  color: #0b3d0b;
+  color: #FFA4A4;
 }
 
 /* The two story buttons */
@@ -67,7 +67,7 @@
 }
 
 .story-btn {
-  background-color: #0b3d0b;
+  background-color: #FFA4A4;
   color: white;
   font-size: 1.2rem;
   font-weight: 600;
@@ -81,7 +81,7 @@
 }
 
 .story-btn:hover {
-  background-color: #145214;
+  background-color: #FFBDBD;
   transform: translateY(-3px);
 }
 

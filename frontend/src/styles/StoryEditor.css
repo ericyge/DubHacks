@@ -42,8 +42,8 @@
 
 .return-btn {
   background: none;
-  border: 2px solid #0b3d0b;
-  color: #0b3d0b;
+  border: 2px solid #FFA4A4;
+  color: #FFA4A4;
   padding: 0.6rem 1.2rem;
   border-radius: 10px;
   font-weight: 600;
@@ -51,7 +51,7 @@
   transition: all 0.3s;
 }
 .return-btn:hover {
-  background-color: #0b3d0b;
+  background-color: #FFBDBD;
   color: #fff;
 }
 
