@@ -57,16 +57,17 @@ class StoryEditor(APIView):
 
         image_file = None
         for part in response.candidates[0].content.parts:
-            try:
-                pil_image = Image.open(BytesIO(part.inline_data.data))
+            if part.inline_data is not None:
+                try:
+                    pil_image = Image.open(BytesIO(part.inline_data.data))
 
-                buffer = BytesIO()
-                pil_image.save(buffer, format='PNG')
-                buffer.seek(0)
-                image_file = ContentFile(buffer.read(), name="generated_image.png")
-                break             
-            except Exception as e:
-                print(f"Error in getting image: {e}")
+                    buffer = BytesIO()
+                    pil_image.save(buffer, format='PNG')
+                    buffer.seek(0)
+                    image_file = ContentFile(buffer.read(), name="generated_image.png")
+                    break             
+                except Exception as e:
+                    print(f"Error in getting image: {e}")
         
         entry = StoryEntry.objects.create(
             branch = branch,
@@ -78,7 +79,7 @@ class StoryEditor(APIView):
 
         return Response({
             "status": "success",
-            "image_url": entry.image.url,
+            "image_url": image_url,
         })
 
 

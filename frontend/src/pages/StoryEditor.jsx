@@ -92,27 +92,44 @@ export default function StoryEditor() {
     setStoryText("");
     setIsProcessing(true);
 
-    await delay(600);
-    setTurns((prev) =>
-      prev.map((t) =>
-        t.id === newTurn.id ? { ...t, userImage: "placeholder" } : t
-      )
-    );
+    try {
+      const branchId = getQueryParam("branch_id");
 
-    await delay(800);
-    setTurns((prev) =>
-      prev.map((t) =>
-        t.id === newTurn.id
-          ? {
-              ...t,
-              aiText:
-                "The night deepened, and the candles flickered softly under the full moon.",
-            }
-          : t
-      )
-    );
+      const response = await fetch(`http://localhost:8000/api/story-editor/?branch_id=${branchId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ Prompt: storyText }),
+      });
 
-    setIsProcessing(false);
+      if (!response.ok) throw new Error("Failed to generate image");
+      const data = await response.json();
+
+      // Update turn with image
+      setTurns((prev) =>
+        prev.map((t) =>
+          t.id === newTurn.id
+            ? {
+                ...t,
+                userImage: data.image_url,
+                aiText: "The story continues...",
+              }
+            : t
+        )
+      );
+    } catch (err) {
+      console.error("Error submitting story:", err);
+      setTurns((prev) =>
+        prev.map((t) =>
+          t.id === newTurn.id
+            ? { ...t, aiText: "Error generating image." }
+            : t
+        )
+      );
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   function delay(ms) {
@@ -171,20 +188,11 @@ export default function StoryEditor() {
                   <div className="line user-text">{t.userText}</div>
                   <div className="image-placeholder-wrapper">
                     {t.userImage ? (
-                      (() => {
-                        // compute placeholder height in px snapped to whole lines
-                        const lh = lineMetrics.lineHeight || 32;
-                        const desiredLines = 4; // make image 4 lines tall by default
-                        const heightPx = Math.round(desiredLines * lh);
-                        return (
-                          <div
-                            className="image-placeholder"
-                            style={{ height: `${heightPx}px` }}
-                          >
-                            [User Image Placeholder]
-                          </div>
-                        );
-                      })()
+                      <img
+                        src={t.userImage}
+                        alt="Generated scene"
+                        className="generated-image"
+                      />
                     ) : (
                       <div className="image-placeholder empty" />
                     )}
