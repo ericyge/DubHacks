@@ -1,23 +1,30 @@
-/* Main Container */
+/* Main Container - Forest Green Background */
 .library-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #6b4423 0%, #8b5a3c 50%, #6b4423 100%);
+  background-color: #0b3d0b;
   padding: 2rem;
   box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.4);
 }
 
 /* Header */
 .library-header {
+  position: sticky;
+  top: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 3rem;
+  padding: 2rem;
+  margin: -2rem -2rem 3rem -2rem;
+  background-color: #0b3d0b;
+  box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.4);
+  z-index: 100;
 }
 
 .library-title {
   font-size: 3rem;
   font-family: Georgia, serif;
-  color: #fef3c7;
+  color: white;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -34,21 +41,22 @@
 .search-input {
   padding: 0.5rem 1rem 0.5rem 2.5rem;
   border-radius: 10px;
-  background-color: #fef3c7;
-  color: #6b4423;
-  border: none;
+  background-color: white;
+  color: #0b3d0b;
+  border: 2px solid #0b3d0b;
   width: 16rem;
   font-size: 1rem;
   outline: none;
-  transition: box-shadow 0.3s;
+  transition: all 0.3s;
 }
 
 .search-input:focus {
-  box-shadow: 0 0 0 2px #8b5a3c;
+  box-shadow: 0 0 0 2px #145214;
 }
 
 .search-input::placeholder {
-  color: #a78055;
+  color: #0b3d0b;
+  opacity: 0.6;
 }
 
 .search-icon {
@@ -56,7 +64,7 @@
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #a78055;
+  color: #0b3d0b;
   pointer-events: none;
 }
 
@@ -65,40 +73,92 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: #fef3c7;
-  color: #6b4423;
-  padding: 0.5rem 1.5rem;
+  background-color: #0b3d0b;
+  color: white;
+  padding: 0.6rem 1.5rem;
   border-radius: 10px;
   border: none;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .new-story-btn:hover {
-  background-color: #fde68a;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
+  background-color: #145214;
+  transform: translateY(-3px);
 }
 
 /* Shelves Container */
 .shelves-container {
   display: flex;
   flex-direction: column;
-  gap: 4rem;
+  gap: 5rem; /* increase space between shelf groups so bottom shelf of one trio and top shelf of the next are separated */
+  margin: 0 -2rem;
 }
 
 .shelf-section {
   position: relative;
 }
 
+/* Top Shelf */
+.shelf-top {
+  width: 100%;
+  margin-bottom: 0; /* remove extra gap above the books */
+}
+
+/* Greek Marble Shelf Style */
+/* Top Shelf — flipped lighting, warm marble tone */
+.shelf-wood {
+  width: 100%;
+  height: 2rem;
+  background: linear-gradient(
+    to top,
+    #f2eedd 0%,
+    #f6f2e4 50%,
+    #f9f5e5 100%
+  );
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.12),
+    0 4px 10px rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+  border-top: 1px solid rgba(200, 190, 160, 0.4);
+  border-radius: 2px;
+}
+
+/* Bottom Shelf — warm marble with light from above */
+.shelf-base {
+  width: 100%;
+  height: 1rem;
+  background: linear-gradient(
+    to bottom,
+    #f9f5e5 0%,
+    #f6f2e4 60%,
+    #f2eedd 100%
+  );
+  box-shadow:
+    inset 0 -2px 3px rgba(0, 0, 0, 0.12),
+    0 -1px 1px rgba(255, 255, 255, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 0 0 2px 2px;
+}
+
+
+/* Bottom Shelf */
+.shelf-bottom {
+  width: 100%;
+  margin-top: 0; /* remove extra gap below the books so books and shelf touch */
+}
+
 /* Books Row */
 .books-row {
   display: flex;
   justify-content: flex-start;
+  align-items: flex-end; /* align books to the bottom of the row */
   gap: 1rem;
-  padding-bottom: 2rem;
+  padding: 1.5rem 2rem 0; /* add top padding so books don't touch the top shelf */
+  margin-bottom: 0;
+  position: relative;
 }
 
 /* Book Spine */
@@ -106,8 +166,11 @@
   width: 80px;
   cursor: pointer;
   position: relative;
+  display: flex;
+  align-items: flex-end; /* make each spine align to the bottom so all bottoms line up */
 }
 
+/* keep the visual lift on hover but avoid extra bottom spacing */
 .book-spine-inner {
   height: 16rem;
   border-radius: 2px;
@@ -119,11 +182,12 @@
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
+  margin-bottom: 0; /* ensure no extra bottom gap is added by the spine inner */
 }
 
 .book-spine:hover .book-spine-inner {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(255, 215, 0, 0.5);
+  transform: translateY(-6px); /* slightly reduce upward lift so hover won't hit the top shelf */
+  box-shadow: 0 12px 24px rgba(20, 82, 20, 0.6);
 }
 
 .book-spine-title {
@@ -156,22 +220,6 @@
   opacity: 1;
 }
 
-/* Shelf */
-.shelf-wood {
-  width: 100%;
-  height: 1rem;
-  background: linear-gradient(to bottom, #5a3a1f 0%, #3d2812 100%);
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.shelf-base {
-  width: 100%;
-  height: 0.5rem;
-  background-color: #2d1810;
-  border-radius: 2px;
-}
-
 /* Book Popup Overlay */
 .book-popup-overlay {
   position: fixed;
@@ -185,6 +233,10 @@
   animation: fadeIn 0.3s ease-out;
 }
 
+.book-popup-overlay.closing {
+  animation: fadeOut 0.3s ease-out forwards;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -194,11 +246,20 @@
   }
 }
 
-/* Book Popup */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Book Popup - White card like ChoosePage */
 .book-popup {
-  background-color: #fffbeb;
-  border-radius: 1rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  background-color: white;
+  border-radius: 24px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 64rem;
   height: 75vh;
@@ -206,6 +267,10 @@
   flex-direction: column;
   position: relative;
   animation: zoomIn 0.3s ease-out;
+}
+
+.book-popup-overlay.closing .book-popup {
+  animation: zoomOut 0.3s ease-out forwards;
 }
 
 @keyframes zoomIn {
@@ -219,12 +284,23 @@
   }
 }
 
+@keyframes zoomOut {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
 /* Close Button */
 .close-btn {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background-color: #6b4423;
+  background-color: #0b3d0b;
   color: white;
   border: none;
   border-radius: 50%;
@@ -239,15 +315,15 @@
 }
 
 .close-btn:hover {
-  background-color: #4a2f18;
+  background-color: #145214;
 }
 
 /* Book Popup Header */
 .book-popup-header {
-  background: linear-gradient(to right, #6b4423, #8b5a3c);
-  color: white;
-  padding: 1.5rem;
-  border-radius: 1rem 1rem 0 0;
+  background-color: white;
+  color: #0b3d0b;
+  padding: 2rem 1.5rem 1rem 1.5rem;
+  border-radius: 24px 24px 0 0;
 }
 
 .book-popup-title {
@@ -255,6 +331,7 @@
   font-family: Georgia, serif;
   text-align: center;
   margin: 0;
+  color: #0b3d0b;
 }
 
 /* Chapters Container */
@@ -272,8 +349,8 @@
 
 /* Chapter Box */
 .chapter-box {
-  background-color: white;
-  border: 2px solid #fcd34d;
+  background-color: #f9f9f9;
+  border: 2px solid #0b3d0b;
   border-radius: 10px;
   padding: 1.5rem;
   cursor: pointer;
@@ -281,21 +358,35 @@
 }
 
 .chapter-box:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border-color: #8b5a3c;
+  background-color: #0b3d0b;
+  color: white;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
 }
 
 .chapter-title {
   font-size: 1.25rem;
   font-family: Georgia, serif;
-  color: #6b4423;
+  color: #0b3d0b;
   margin: 0 0 0.5rem 0;
+  transition: color 0.3s;
+}
+
+.chapter-box:hover .chapter-title {
+  color: white;
 }
 
 .chapter-subtitle {
-  color: #8b5a3c;
+  color: #0b3d0b;
   font-size: 0.875rem;
   margin: 0;
+  opacity: 0.7;
+  transition: color 0.3s;
+}
+
+.chapter-box:hover .chapter-subtitle {
+  color: white;
+  opacity: 0.9;
 }
 
 /* Book Popup Footer */
@@ -304,8 +395,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  background-color: #fef3c7;
-  border-radius: 0 0 1rem 1rem;
+  background-color: white;
+  border-radius: 0 0 24px 24px;
+  border-top: 1px solid #e5e5e5;
 }
 
 /* Navigation Button */
@@ -313,17 +405,18 @@
   padding: 0.75rem;
   border-radius: 50%;
   border: none;
-  background-color: #6b4423;
+  background-color: #0b3d0b;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .nav-btn:hover:not(.disabled) {
-  background-color: #4a2f18;
+  background-color: #145214;
+  transform: translateY(-2px);
 }
 
 .nav-btn.disabled {
@@ -334,8 +427,56 @@
 
 /* Page Counter */
 .page-counter {
-  color: #6b4423;
+  color: #0b3d0b;
   font-weight: 600;
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: bounce 2s infinite;
+  z-index: 40;
+}
+
+.scroll-text {
+  color: #0b3d0b;
+  font-weight: 600;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.scroll-arrow {
+  color: #0b3d0b;
+  animation: arrowBounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+@keyframes arrowBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
 }
 
 /* Responsive Design */

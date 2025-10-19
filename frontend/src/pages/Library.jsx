@@ -7,6 +7,7 @@ export default function Library() {
   const [selectedBook, setSelectedBook] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isClosing, setIsClosing] = useState(false);
 
   // Mock data - will be replaced with database data
   const mockBooks = [
@@ -22,9 +23,37 @@ export default function Library() {
     { id: 10, title: "Ocean Deep", color: "#006994", chapters: 10 },
     { id: 11, title: "Mountain Peak", color: "#A0522D", chapters: 6 },
     { id: 12, title: "Desert Mirage", color: "#DAA520", chapters: 8 },
+    { id: 13, title: "Vampire Chronicles", color: "#8B0000", chapters: 16 },
+    { id: 14, title: "Ancient Ruins", color: "#CD853F", chapters: 9 },
+    { id: 15, title: "Sky Kingdom", color: "#87CEEB", chapters: 11 },
+    { id: 16, title: "Underground City", color: "#4B4B4B", chapters: 13 },
+    { id: 17, title: "Fairy Tales", color: "#FF69B4", chapters: 10 },
+    { id: 18, title: "Shadow Realm", color: "#2C2C2C", chapters: 14 },
+    { id: 19, title: "Crystal Caverns", color: "#9370DB", chapters: 8 },
+    { id: 20, title: "Storm Chasers", color: "#4682B4", chapters: 12 },
+    { id: 21, title: "Lost Civilization", color: "#8B7355", chapters: 15 },
+    { id: 22, title: "Ghost Town", color: "#696969", chapters: 7 },
+    { id: 23, title: "Arctic Expedition", color: "#B0E0E6", chapters: 10 },
+    { id: 24, title: "Volcano Island", color: "#FF4500", chapters: 11 },
+    { id: 25, title: "Midnight Garden", color: "#2F4F4F", chapters: 9 },
+    { id: 26, title: "Golden Empire", color: "#FFD700", chapters: 13 },
+    { id: 27, title: "Alien Encounter", color: "#00FF00", chapters: 12 },
+    { id: 28, title: "Cursed Treasure", color: "#8B4513", chapters: 14 },
+    { id: 29, title: "Lightning Strikes", color: "#FFD700", chapters: 8 },
+    { id: 30, title: "Mystic Forest", color: "#228B22", chapters: 10 },
+    { id: 31, title: "Warrior's Path", color: "#B22222", chapters: 16 },
+    { id: 32, title: "Star Voyager", color: "#191970", chapters: 15 },
+    { id: 33, title: "Haunted Castle", color: "#4B0082", chapters: 11 },
+    { id: 34, title: "River Journey", color: "#4682B4", chapters: 9 },
+    { id: 35, title: "Secret Society", color: "#800000", chapters: 13 },
+    { id: 36, title: "Wild West", color: "#D2691E", chapters: 12 },
+    { id: 37, title: "Ninja Academy", color: "#2F4F4F", chapters: 14 },
+    { id: 38, title: "Phoenix Rising", color: "#FF6347", chapters: 10 },
+    { id: 39, title: "Frozen Kingdom", color: "#ADD8E6", chapters: 11 },
+    { id: 40, title: "Samurai Legend", color: "#8B0000", chapters: 15 },
   ];
 
-  const booksPerShelf = 6;
+  const booksPerShelf = 4;
   const shelves = [];
   for (let i = 0; i < mockBooks.length; i += booksPerShelf) {
     shelves.push(mockBooks.slice(i, i + booksPerShelf));
@@ -33,11 +62,16 @@ export default function Library() {
   const handleBookClick = (book) => {
     setSelectedBook(book);
     setCurrentPage(0);
+    setIsClosing(false);
   };
 
   const handleCloseBook = () => {
-    setSelectedBook(null);
-    setCurrentPage(0);
+    setIsClosing(true);
+    setTimeout(() => {
+      setSelectedBook(null);
+      setCurrentPage(0);
+      setIsClosing(false);
+    }, 300); // Match animation duration
   };
 
   const chaptersPerPage = 6;
@@ -126,6 +160,12 @@ export default function Library() {
       <div className="shelves-container">
         {shelves.map((shelf, shelfIndex) => (
           <div key={shelfIndex} className="shelf-section">
+            {/* Top Shelf */}
+            <div className="shelf-top">
+              <div className="shelf-base" />
+              <div className="shelf-wood" />
+            </div>
+
             {/* Books */}
             <div className="books-row">
               {shelf.map((book) => (
@@ -145,16 +185,34 @@ export default function Library() {
               ))}
             </div>
 
-            {/* Shelf */}
-            <div className="shelf-wood" />
-            <div className="shelf-base" />
+            {/* Bottom Shelf */}
+            <div className="shelf-bottom">
+              <div className="shelf-wood" />
+              <div className="shelf-base" />
+            </div>
           </div>
         ))}
       </div>
 
+      {/* Scroll Indicator */}
+      <div className="scroll-indicator">
+        <p className="scroll-text">Scroll for more books</p>
+        <svg
+          className="scroll-arrow"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </div>
+
       {/* Book Popup */}
       {selectedBook && (
-        <div className="book-popup-overlay">
+        <div className={`book-popup-overlay ${isClosing ? "closing" : ""}`}>
           <div className="book-popup">
             {/* Close Button */}
             <button onClick={handleCloseBook} className="close-btn">
