@@ -7,12 +7,9 @@ from PIL import Image
 from django.conf import settings
 from main.models import StoryEntry, Branch, Book
 from django.core.files.base import ContentFile
-<<<<<<< Updated upstream
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-=======
 from rest_framework.decorators import api_view
->>>>>>> Stashed changes
 
 # Create your views here.
 class ChoosePage(APIView):

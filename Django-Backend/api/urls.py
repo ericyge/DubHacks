@@ -1,9 +1,5 @@
 from django.urls import path
-<<<<<<< Updated upstream
-from .views import ChoosePage, StoryEditor, ChoosePagePopup
-=======
-from .views import ChoosePage, StoryEditor, get_book_title
->>>>>>> Stashed changes
+from .views import ChoosePage, StoryEditor, ChoosePagePopup, get_book_title
 
 urlpatterns = [
     path(
