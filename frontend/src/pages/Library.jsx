@@ -11,6 +11,7 @@ export default function Library() {
   const [bookHeights, setBookHeights] = useState({});
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [spineDesigns, setSpineDesigns] = useState({});
+  const [bookColors, setBookColors] = useState({});
   const [books, setBooks] = useState([]); // ✅ added missing state
 
   const perShelf = 8; // how many books per shelf
@@ -98,6 +99,33 @@ export default function Library() {
     setSpineDesigns(designs);
   }, [books]);
 
+  // Assign each fetched book a color from a palette if it doesn't already have one.
+  // This mapping is stable (deterministic) based on book.id.
+  useEffect(() => {
+    if (!books || books.length === 0) return;
+
+    const palette = [
+      "#8B4513", "#2F4F4F", "#191970", "#228B22", "#8B0000",
+      "#B22222", "#FF8C00", "#4B0082", "#006400", "#483D8B",
+      "#2E8B57", "#556B2F", "#CD5C5C", "#4682B4", "#D2691E"
+    ];
+
+    const hash = (v) => {
+      const s = String(v);
+      let h = 0;
+      for (let i = 0; i < s.length; i++) h = (h << 5) - h + s.charCodeAt(i);
+      return Math.abs(h);
+    };
+
+    const mapped = {};
+    books.forEach((b) => {
+      // preserve color if backend already provides one
+      if (b.color) mapped[b.id] = b.color;
+      else mapped[b.id] = palette[hash(b.id) % palette.length];
+    });
+    setBookColors(mapped);
+  }, [books]);
+
   // ✅ Random heights for each book
   useEffect(() => {
     const minRem = 13;
@@ -181,26 +209,27 @@ export default function Library() {
 
             <div className="books-row">
               {shelf.map((book) => {
-                const designClass = spineDesigns[book.id] || "spine-style-1";
-                return (
-                  <div
-                    key={book.id}
-                    onClick={() => handleBookClick(book)}
-                    className="book-spine"
-                  >
-                    <div
-                      className={`book-spine-inner ${designClass}`}
-                      style={{
-                        backgroundColor: book.color,
-                        height: bookHeights[book.id] || "16rem",
-                      }}
-                    >
-                      <p className="book-spine-title">{book.title}</p>
-                      <div className="book-glow" />
-                    </div>
-                  </div>
-                );
-              })}
+                 const designClass = spineDesigns[book.id] || "spine-style-1";
+                 return (
+                   <div
+                     key={book.id}
+                     onClick={() => handleBookClick(book)}
+                     className="book-spine"
+                   >
+                     <div
+                       className={`book-spine-inner ${designClass}`}
+                       style={{
+                         backgroundColor: book.color || bookColors[book.id] || "#777",
+                         height: bookHeights[book.id] || "16rem", // fallback
+                       }}
+                     >
+                        <div className="book-shade" />
+                         <p className="book-spine-title">{book.title}</p>
+                         <div className="book-glow" />
+                       </div>
+                   </div>
+                 );
+               })}
             </div>
 
             <div className="shelf-bottom">
