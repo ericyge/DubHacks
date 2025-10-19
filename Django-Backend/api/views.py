@@ -26,17 +26,15 @@ class ChoosePage(APIView):
             "next": f"/story-editor?mode={mode}" 
         })
 
-@method_decorator(csrf_exempt, name='dispatch')
 class ChoosePagePopup(APIView):
     def post(self, request):
         data = request.data
-        
         book = Book.objects.create(title=data.get("title"))
-        branch = Branch.objects.create(book=book)
+        branch = book.branches.first()  # the signal already created it
         return Response({
             "status": "success",
             "book_id": book.pk,
-            "branch_id": branch.pk
+            "branch_id": branch.pk  
         })
         
     
@@ -107,11 +105,13 @@ class StoryEditor(APIView):
             ),
         )
 
-        text = response.text
+        ai_text = response.text
+        print(f"Here is the ai_text: {ai_text}")
 
         entry = StoryEntry.objects.create(
             branch = branch,
             text=data.get('Prompt'),
+            ai_text=ai_text,
             image=image_file  # assign the ContentFile here
         )
 
@@ -120,7 +120,7 @@ class StoryEditor(APIView):
         return Response({
             "status": "success",
             "image_url": image_url,
-            "text": text,
+            "text": ai_text,
         })
 
 
@@ -183,3 +183,18 @@ def book_original_branch(request, book_id):
         return JsonResponse(data)
     except Book.DoesNotExist:
         return JsonResponse({"error": "Book not found"}, status=404)
+    
+
+class StoryEntriesView(APIView):
+    def get(self, request, branch_id):
+        entries = StoryEntry.objects.filter(branch_id=branch_id).order_by("created_at")
+        serialized = [
+            {
+                "id": entry.pk,
+                "userText": entry.text,
+                "userImage": request.build_absolute_uri(entry.image.url),
+                "aiText": entry.ai_text,
+            }
+            for entry in entries
+        ]
+        return Response(serialized)

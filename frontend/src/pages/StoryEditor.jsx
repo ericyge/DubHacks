@@ -104,6 +104,7 @@ export default function StoryEditor() {
             : t
         )
       );
+      
     } catch (err) {
       console.error("Error submitting story:", err);
       setTurns((prev) =>
@@ -210,6 +211,24 @@ export default function StoryEditor() {
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
+
+  const hasFetched = useRef(false);
+
+  useEffect(() => {
+    const branchId = getQueryParam("branch_id");
+    if (!branchId || hasFetched.current) return; // prevent second fetch
+
+    hasFetched.current = true;
+
+    fetch(`http://localhost:8000/api/story-entries/${branchId}/`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch story entries");
+        return res.json();
+      })
+      .then((data) => setTurns(data))
+      .catch((err) => console.error("Error loading story entries:", err));
+  }, [location.search]);
+
 
   return (
     <div className="story-editor-container">

@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import ChoosePage, StoryEditor, ChoosePagePopup, get_book_title, list_books
+from .views import ChoosePage, StoryEditor, ChoosePagePopup, StoryEntriesView, get_book_title, list_books
 
 urlpatterns = [
     path(
@@ -28,6 +28,6 @@ urlpatterns = [
     views.book_original_branch, 
     name="book-original"
     ),
-
+    path("story-entries/<int:branch_id>/", StoryEntriesView.as_view(), name="story_entries"),
 
 ]

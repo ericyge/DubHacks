@@ -17,14 +17,6 @@ class Branch(models.Model):
 
     def __str__(self):
         return f"{self.book.title} - {self.name}"
-    
-    def save(self, *args, **kwargs):
-        # Only set default if no name is provided
-        if not self.name:
-            # If this is the first branch for the book, set name to "Original"
-            if self.book.branches.count() == 0:
-                self.name = "Original"
-        super().save(*args, **kwargs)
 
 
 class StoryEntry(models.Model):
@@ -32,6 +24,7 @@ class StoryEntry(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     node = models.IntegerField(blank=True, null=True)
+    ai_text = models.TextField(default="")
     image = models.ImageField(upload_to='story_images/', blank=True, null=True)
 
     def save(self, *args, **kwargs):
