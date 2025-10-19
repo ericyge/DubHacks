@@ -233,7 +233,7 @@ export default function StoryEditor() {
       {menuOpen && (
         <div className="menu-overlay" onClick={() => setMenuOpen(false)}>
           <div className="overlay-menu" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => navigate("/ChoosePage")}>Return to Menu</button>
+            <button onClick={() => navigate("/choose-page")}>Return to Menu</button>
             <button onClick={() => navigate("/sidequest/new")}>Start a SideQuest</button>
             <button onClick={() => alert("Exporting to PDF...")}>Export to PDF</button>
           </div>
