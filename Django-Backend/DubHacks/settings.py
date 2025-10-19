@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'dubhacks_db',
         'USER': 'dubhacks_user',
-        'PASSWORD': 'dubhacks_pass',
+        'PASSWORD': 'password123$',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -137,5 +137,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
+GEMINI_API_KEY="AIzaSyCuE4wOYLY9P7QKKZdiZSG_UvUc2f8jQV8"
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 # OR, temporarily:
 # CORS_ALLOW_ALL_ORIGINS = True

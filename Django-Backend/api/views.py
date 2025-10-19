@@ -1,6 +1,12 @@
 from rest_framework.views import APIView
 from django.http import HttpResponse
 from rest_framework.response import Response
+from google import genai
+from io import BytesIO
+from PIL import Image
+from django.conf import settings
+from main.models import StoryEntry, Branch
+from django.core.files.base import ContentFile
 
 # Create your views here.
 class ChoosePage(APIView):
@@ -15,25 +21,43 @@ class ChoosePage(APIView):
             "next": f"/story-editor?mode={mode}" 
         })
     
-# class StoryEditor(APIView):
-#     def get(self, request):
-#         data = request.data
-
-#         mode = data.get('mode')
-
-#         return Response({
-#             "status": mode
-#         })
-
-class SaveButton(APIView):
+class StoryEditor(APIView):
     def post(self, request):
         data = request.data
+        client = genai.Client(api_key = "AIzaSyCuE4wOYLY9P7QKKZdiZSG_UvUc2f8jQV8")
+
+        prompt = data.get('Prompt')
+        branch_pk = data.get('Branch_pk')
+        branch = Branch.objects.get(pk = branch_pk)
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash-image",
+            contents=[prompt],
+        )
+
+        image_file = None
+        for part in response.candidates[0].content.parts:
+            try:
+                pil_image = Image.open(BytesIO(part.inline_data.data))
+
+                buffer = BytesIO()
+                pil_image.save(buffer, format='PNG')
+                buffer.seek(0)
+                image_file = ContentFile(buffer.read(), name="generated_image.png")
+                break             
+            except Exception as e:
+                print(f"Error in getting image: {e}")
         
-        title = data.get('title')
-        print(f"Title: {title}")
+        entry = StoryEntry.objects.create(
+            branch = branch,
+            text=prompt,
+            image=image_file  # assign the ContentFile here
+        )
+
+        image_url = request.build_absolute_uri(entry.image.url)
 
         return Response({
             "status": "success",
-            "title": title
+            "image_url": entry.image.url,
         })
 
