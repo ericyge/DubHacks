@@ -10,11 +10,20 @@ class Book(models.Model):
 
 class Branch(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="branches")
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.book.title} - {self.name}"
+    
+    def save(self, *args, **kwargs):
+        # Only set default if no name is provided
+        if not self.name:
+            # If this is the first branch for the book, set name to "Original"
+            if self.book.branches.count() == 0:
+                self.name = "Original"
+        super().save(*args, **kwargs)
+
 
 class StoryEntry(models.Model):
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="entries")

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function ChoosePage() {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const [storyTitle, setStoryTitle] = useState("");
+  const [title, settitle] = useState("");
 
   // Handles AI or other modes
   const handleChoice = (mode) => {
@@ -34,34 +34,24 @@ export default function ChoosePage() {
     }
   };
 
-  // Called when user submits the title
   const handleCreateStory = () => {
-    if (!storyTitle.trim()) {
+    if (!title.trim()) {
       alert("Please enter a title before continuing.");
       return;
     }
-
-    fetch("http://localhost:8000/api/create-story/", {
+    fetch("http://localhost:8000/api/choose-page-popup/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: storyTitle }),
+      body: JSON.stringify({ title }),
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to create story");
+        if (!res.ok) throw new Error("Network response was not ok");
         return res.json();
       })
       .then((data) => {
-        setShowModal(false);
-        if (data.status === "success" && data.id) {
-          navigate(`/story-editor?mode=custom&id=${data.id}&title=${encodeURIComponent(storyTitle)}`);
-        } else {
-          navigate(`/story-editor?mode=custom&title=${encodeURIComponent(storyTitle)}`);
-        }
+        navigate(`/story-editor/?book_id=${data.book_id}&branch_id=${data.branch_id}`);
       })
-      .catch((err) => {
-        console.error("Error creating story:", err);
-        alert("An error occurred creating your story.");
-      });
+      .catch((err) => console.error("Error creating story:", err));
   };
 
   return (
@@ -93,8 +83,8 @@ export default function ChoosePage() {
             <h2>Create Title Name</h2>
             <textarea
               className="title-input"
-              value={storyTitle}
-              onChange={(e) => setStoryTitle(e.target.value)}
+              value={title}
+              onChange={(e) => settitle(e.target.value)}
               placeholder="Enter your story title..."
               rows="2"
             />

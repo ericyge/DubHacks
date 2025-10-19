@@ -5,14 +5,16 @@ from google import genai
 from io import BytesIO
 from PIL import Image
 from django.conf import settings
-from main.models import StoryEntry, Branch
+from main.models import StoryEntry, Branch, Book
 from django.core.files.base import ContentFile
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 # Create your views here.
 class ChoosePage(APIView):
     def post(self, request):
         data = request.data
-        
+
         mode = data.get('mode')
         print(f"Chose mode: {mode}")
 
@@ -20,15 +22,30 @@ class ChoosePage(APIView):
             "status": "success",
             "next": f"/story-editor?mode={mode}" 
         })
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ChoosePagePopup(APIView):
+    def post(self, request):
+        data = request.data
+        
+        book = Book.objects.create(title=data.get("title"))
+        branch = Branch.objects.create(book=book)
+        return Response({
+            "status": "success",
+            "book_id": book.pk,
+            "branch_id": branch.pk
+        })
+        
     
 class StoryEditor(APIView):
     def post(self, request):
+        branch_pk = request.GET.get("branch_id")
+
         data = request.data
         client = genai.Client(api_key = "AIzaSyCuE4wOYLY9P7QKKZdiZSG_UvUc2f8jQV8")
 
         prompt = data.get('Prompt')
-        branch_pk = data.get('Branch_pk')
-        branch = Branch.objects.get(pk = branch_pk)
+        branch = Branch.objects.get(pk=branch_pk)
 
         response = client.models.generate_content(
             model="gemini-2.5-flash-image",
