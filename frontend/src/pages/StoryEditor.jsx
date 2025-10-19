@@ -13,7 +13,6 @@ export default function StoryEditor() {
   const linedPaperRef = useRef(null);
   const [lineMetrics, setLineMetrics] = useState({ lineHeight: 32, lineOffset: 8 });
   const navigate = useNavigate();
-<<<<<<< Updated upstream
   const location = useLocation();
 
   // Helper to extract query params
@@ -37,7 +36,6 @@ export default function StoryEditor() {
         setBookTitle("Untitled Story");
       });
   }, [location.search]);
-=======
   
   // Insert newline on Enter (plain Enter) and allow submit with Ctrl/Cmd+Enter
   const handleKeyDown = (e) => {
@@ -78,7 +76,6 @@ export default function StoryEditor() {
   useEffect(() => {
     adjustTextareaHeight();
   }, [storyText]);
->>>>>>> Stashed changes
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -211,9 +208,6 @@ export default function StoryEditor() {
                 rows={1}
                 style={{ lineHeight: "32px" }}
               />
-<<<<<<< Updated upstream
-              <button className="submit-btn" type="submit" disabled={isProcessing}>
-=======
               <button
                 className="submit-btn"
                 type="submit"
@@ -222,7 +216,6 @@ export default function StoryEditor() {
                 onMouseLeave={() => setSubmitHover(false)}
                 style={{ backgroundColor: submitHover ? "#FFBDBD" : undefined }}
               >
->>>>>>> Stashed changes
                 Submit
               </button>
             </form>
