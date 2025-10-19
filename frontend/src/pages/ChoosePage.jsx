@@ -39,7 +39,7 @@ export default function ChoosePage() {
         <div className="choose-header">
           <button
             className="return-btn"
-            onClick={() => navigate("/library")}
+            onClick={() => navigate("/")}
           >
             Return to My Library
           </button>
