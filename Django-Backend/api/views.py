@@ -10,7 +10,11 @@ from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from rest_framework.decorators import api_view
+<<<<<<< Updated upstream
 from google.genai import types
+=======
+from django.http import JsonResponse
+>>>>>>> Stashed changes
 
 # Create your views here.
 class ChoosePage(APIView):
@@ -134,7 +138,7 @@ def get_book_title(request, branch_id):
         return Response({"error": "Branch not found"}, status=404)
     
 
-    
+'''    
 @api_view(['GET'])
 def list_books(request):
     books = Book.objects.all().order_by('-created_at')
@@ -147,3 +151,38 @@ def list_books(request):
         for book in books
     ]
     return Response(data)
+'''
+
+@api_view(['GET'])
+def list_books(request):
+    books = Book.objects.all().order_by('-created_at')
+    data = [
+        {
+            "id": book.id,
+            "title": book.title,
+            "created_at": book.created_at,
+            "branches": [
+                {"id": branch.id, "name": branch.name}
+                for branch in book.branches.all()
+            ],
+        }
+        for book in books
+    ]
+    return Response(data)
+
+def book_original_branch(request, book_id):
+    try:
+        book = Book.objects.get(pk=book_id)
+        # Get or create the original branch
+        original_branch = book.branches.filter(name="Original").first()
+        if not original_branch:
+            original_branch = Branch.objects.create(book=book, name="Original")
+        data = {
+            "id": original_branch.id,
+            "name": original_branch.name,
+            "book_id": book.id,
+            "book_title": book.title,
+        }
+        return JsonResponse(data)
+    except Book.DoesNotExist:
+        return JsonResponse({"error": "Book not found"}, status=404)

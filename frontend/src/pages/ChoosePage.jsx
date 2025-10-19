@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import "./../styles/ChoosePage.css";
 import { useNavigate } from "react-router-dom";
+import BranchesModal from "./../components/BranchesModal";
 
 export default function ChoosePage() {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [title, settitle] = useState("");
+  const [bookModal, setBookModal] = useState(null); // holds book object with branches
 
   // Handles AI or other modes
   const handleChoice = (mode) => {
@@ -32,6 +34,28 @@ export default function ChoosePage() {
         })
         .catch((err) => console.error("Error sending choice:", err));
     }
+  };
+
+  const openBranchesForBook = async (bookId) => {
+    try {
+      const res = await fetch(`http://localhost:8000/api/books/${bookId}/`);
+      if (!res.ok) throw new Error("Failed to load book");
+      const data = await res.json();
+      // data should include branches per backend implementation
+      setBookModal(data);
+    } catch (err) {
+      console.error("Error loading branches for book:", err);
+      alert("Failed to load branches for this book.");
+    }
+  };
+
+  const closeBookModal = () => setBookModal(null);
+
+  const openBranch = (branchId) => {
+    // Navigate to story editor for the selected branch
+    // keep popup open behavior minimal: close modal then navigate
+    setBookModal(null);
+    navigate(`/story-editor/?branch_id=${branchId}`);
   };
 
   const handleCreateStory = () => {

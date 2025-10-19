@@ -23,6 +23,11 @@ urlpatterns = [
     path(
         "books/", views.list_books, name="list_books"
     ),
+    path(
+    "books/<int:book_id>/original/", 
+    views.book_original_branch, 
+    name="book-original"
+    ),
 
 
 ]

@@ -1,0 +1,85 @@
+.branches-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  z-index: 1200;
+}
+
+.branches-modal-card {
+  width: min(920px, 94%);
+  max-height: 80vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+.branches-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.branches-modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.branches-close {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.branches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.branch-tile {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  border: 1px solid #eee;
+}
+
+.branch-name {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.branch-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.open-branch-btn {
+  background: #FFA4A4;
+  border: none;
+  color: #333;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.open-branch-btn:hover {
+  background: #FFBDBD;
+}
+
+.no-branches {
+  grid-column: 1/-1;
+  text-align: center;
+  color: #666;
+  padding: 20px 0;
+}

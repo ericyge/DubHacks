@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./../styles/Library.css";
 import { useNavigate } from "react-router-dom";
+import BranchesModal from "./../components/BranchesModal";
 
 export default function Library() {
   const navigate = useNavigate();
@@ -49,11 +50,25 @@ export default function Library() {
   for (let i = 0; i < booksToShow.length; i += perShelf) {
     shelves.push(booksToShow.slice(i, i + perShelf));
   }
-
+/*
   const handleBookClick = (book) => {
     setSelectedBook(book);
     setCurrentPage(0);
     setIsClosing(false);
+  };
+*/
+  // Open branches in a modal grid instead of navigating away
+  const handleBookClick = (book) => {
+    // book object already contains `branches` from the list_books API
+    setSelectedBook(book);
+    setCurrentPage(0);
+    setIsClosing(false);
+  };
+
+  const openBranchFromModal = (branchId) => {
+    // Close modal and navigate to story-editor for the chosen branch
+    setSelectedBook(null);
+    navigate(`/story-editor/?branch_id=${branchId}`);
   };
 
   const handleCloseBook = () => {
@@ -264,81 +279,13 @@ export default function Library() {
         <div className="scroll-arrow">↓</div>
       </div>
 
-      {/* Book Popup */}
+      {/* Book Popup / Branches Modal */}
       {selectedBook && (
-        <div className={`book-popup-overlay ${isClosing ? "closing" : ""}`}>
-          <div className="book-popup">
-            <button 
-              onClick={handleCloseBook} 
-              className="close-btn"
-              style={{ backgroundColor: selectedBook.color }}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-
-            <div className="book-popup-header">
-              <h2 className="book-popup-title" style={{ color: selectedBook.color }}>
-                {selectedBook.title}
-              </h2>
-            </div>
-
-            <div className="chapters-container">
-              <div className="chapters-grid">
-                {getCurrentChapters().map((chapterNum) => (
-                  <div 
-                    key={chapterNum} 
-                    className="chapter-box"
-                    style={{ borderColor: selectedBook.color }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = selectedBook.color;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "#f9f9f9";
-                    }}
-                  >
-                    <h3 className="chapter-title" style={{ color: selectedBook.color }}>
-                      Chapter {chapterNum}
-                    </h3>
-                    <p className="chapter-subtitle" style={{ color: selectedBook.color }}>
-                      Click to read...
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="book-popup-footer">
-              <button
-                onClick={prevPage}
-                disabled={currentPage === 0}
-                className={`nav-btn ${currentPage === 0 ? "disabled" : ""}`}
-                style={{ backgroundColor: currentPage === 0 ? undefined : selectedBook.color }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-
-              <span className="page-counter" style={{ color: selectedBook.color }}>
-                Page {currentPage + 1} of {totalPages}
-              </span>
-
-              <button
-                onClick={nextPage}
-                disabled={currentPage === totalPages - 1}
-                className={`nav-btn ${currentPage === totalPages - 1 ? "disabled" : ""}`}
-                style={{ backgroundColor: currentPage === totalPages - 1 ? undefined : selectedBook.color }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
+        <BranchesModal
+          book={selectedBook}
+          onClose={handleCloseBook}
+          onOpenBranch={openBranchFromModal}
+        />
       )}
     </div>
   );

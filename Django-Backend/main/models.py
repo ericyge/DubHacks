@@ -1,3 +1,5 @@
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.db import models
 
 class Book(models.Model):
@@ -44,3 +46,9 @@ class StoryEntry(models.Model):
 
     def __str__(self):
         return f"{self.branch} - Node {self.node}"
+    
+@receiver(post_save, sender=Book)
+def create_original_branch(sender, instance, created, **kwargs):
+    """Automatically create 'Original' branch for each new book."""
+    if created and not instance.branches.exists():
+        Branch.objects.create(book=instance, name="Original")
