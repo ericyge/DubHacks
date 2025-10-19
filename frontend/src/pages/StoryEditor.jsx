@@ -85,18 +85,21 @@ export default function StoryEditor() {
           <div className="lined-paper">
             {turns.map((t) => (
               <div key={t.id} className="story-line-block fade-in-up">
-                {/* User line */}
-                <div className="line user-text">{t.userText}</div>
+                <div className="turn-wrapper">
+                  <div className="line user-text">{t.userText}</div>
 
-                {/* User image only */}
-                {t.userImage && (
-                  <div className="image-placeholder">
-                    [User Image Placeholder]
+                  <div className="image-placeholder-wrapper">
+                    {t.userImage ? (
+                      <div className="image-placeholder">[User Image Placeholder]</div>
+                    ) : (
+                      <div className="image-placeholder empty" />
+                    )}
                   </div>
-                )}
 
-                {/* AI line */}
-                {t.aiText && <div className="line ai-text">{t.aiText}</div>}
+                  <div className="line ai-text">
+                    {t.aiText || <span className="empty-line">&nbsp;</span>}
+                  </div>
+                </div>
               </div>
             ))}
 
@@ -109,6 +112,8 @@ export default function StoryEditor() {
                 onChange={(e) => setStoryText(e.target.value)}
                 placeholder="Continue the story..."
                 rows={1}
+                style={{ lineHeight: "32px" }}
+
               />
               <button
                 className="submit-btn"

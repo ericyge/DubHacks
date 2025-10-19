@@ -258,7 +258,7 @@
 /* Image placeholder */
 .image-placeholder {
   width: 400px;
-  height: 250px;
+  height: 225px;
   background-color: #ccc;
   border: 2px dashed #bbb;
   border-radius: 8px;
@@ -332,6 +332,7 @@
   transition: background-color 0.3s, transform 0.1s;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   margin-top: 0.5rem;
+  margin-right: 0.5rem;
 }
 .submit-btn:hover {
   background-color: #145214;
