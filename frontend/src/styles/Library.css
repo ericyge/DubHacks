@@ -107,42 +107,18 @@
   margin-bottom: 0; /* remove extra gap above the books */
 }
 
-/* Greek Marble Shelf Style */
-/* Top Shelf — flipped lighting, warm marble tone */
 .shelf-wood {
   width: 100%;
   height: 2rem;
-  background: linear-gradient(
-    to top,
-    #f2eedd 0%,
-    #f6f2e4 50%,
-    #f9f5e5 100%
-  );
-  box-shadow:
-    inset 0 2px 3px rgba(0, 0, 0, 0.12),
-    0 4px 10px rgba(0, 0, 0, 0.25);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
-  border-top: 1px solid rgba(200, 190, 160, 0.4);
-  border-radius: 2px;
+  background: linear-gradient(to bottom, #4a2511 0%, #2d1810 100%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Bottom Shelf — warm marble with light from above */
 .shelf-base {
   width: 100%;
   height: 1rem;
-  background: linear-gradient(
-    to bottom,
-    #f9f5e5 0%,
-    #f6f2e4 60%,
-    #f2eedd 100%
-  );
-  box-shadow:
-    inset 0 -2px 3px rgba(0, 0, 0, 0.12),
-    0 -1px 1px rgba(255, 255, 255, 0.6);
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 0 0 2px 2px;
+  background-color: #1a0f08;
 }
-
 
 /* Bottom Shelf */
 .shelf-bottom {
@@ -163,7 +139,7 @@
 
 /* Book Spine */
 .book-spine {
-  width: 80px;
+  width: 100px; /* wider spines for a more book-like look */
   cursor: pointer;
   position: relative;
   display: flex;
@@ -181,7 +157,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem;
+  padding: 0.6rem; /* a bit more breathing room for larger text */
   margin-bottom: 0; /* ensure no extra bottom gap is added by the spine inner */
 }
 
@@ -193,7 +169,7 @@
 .book-spine-title {
   color: white;
   font-family: Georgia, serif;
-  font-size: 0.875rem;
+  font-size: 1.2rem; /* larger title text on the spine */
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: center;
@@ -228,9 +204,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
+  z-index: 9999; /* bring overlay above sticky header */
   padding: 2rem;
   animation: fadeIn 0.3s ease-out;
+}
+
+/* ensure popup card sits above the overlay (optional) */
+.book-popup {
+  background-color: white;
+  border-radius: 24px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 64rem;
+  height: 75vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10000;
+  animation: zoomIn 0.3s ease-out;
 }
 
 .book-popup-overlay.closing {
@@ -266,6 +257,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  z-index: 10000;
   animation: zoomIn 0.3s ease-out;
 }
 
@@ -442,41 +434,48 @@
   align-items: center;
   gap: 0.5rem;
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  animation: bounce 2s infinite;
+  padding: 0.8rem 1.6rem; /* slightly smaller padding for subtle look */
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   z-index: 40;
+  transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease, background-color 180ms ease;
+  cursor: pointer;         /* ensures pointer cursor */
+  user-select: none;       /* prevent text selection */
+  -webkit-tap-highlight-color: transparent;
+  backface-visibility: hidden;
 }
 
-.scroll-text {
+/* prevent children from intercepting pointer events (stops text caret / I-beam) */
+.scroll-indicator .scroll-text,
+.scroll-indicator .scroll-arrow {
+  user-select: none;
+  pointer-events: none;
   color: #0b3d0b;
   font-weight: 600;
-  margin: 0;
-  font-size: 0.9rem;
 }
 
-.scroll-arrow {
-  color: #0b3d0b;
-  animation: arrowBounce 2s infinite;
+/* subtle hover lift and arrow nudge */
+.scroll-indicator:hover {
+  transform: translateX(-50%) translateY(-6px) scale(1.03);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+  background-color: rgba(255, 255, 255, 0.98);
+}
+.scroll-indicator:hover .scroll-arrow {
+  transform: translateY(-4px);
+  transition: transform 160ms ease;
 }
 
-@keyframes bounce {
-  0%, 100% {
-    transform: translateX(-50%) translateY(0);
-  }
-  50% {
-    transform: translateX(-50%) translateY(-10px);
-  }
+/* pressed feedback */
+.scroll-indicator:active {
+  transform: translateX(-50%) translateY(-2px) scale(0.995);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
-@keyframes arrowBounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(5px);
-  }
+/* hidden state when at bottom or when overlay open */
+.scroll-indicator.hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
+  pointer-events: none;
 }
 
 /* Responsive Design */
@@ -508,8 +507,9 @@
     gap: 0.5rem;
   }
 
+  /* keep mobile slightly narrower but readable */
   .book-spine {
-    width: 60px;
+    width: 80px;
   }
 
   .book-spine-inner {

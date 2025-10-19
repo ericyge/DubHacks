@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./../styles/Library.css";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +8,8 @@ export default function Library() {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [isClosing, setIsClosing] = useState(false);
+  const [bookHeights, setBookHeights] = useState({});
+  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
 
   // Mock data - will be replaced with database data
   const mockBooks = [
@@ -105,6 +107,41 @@ export default function Library() {
     );
   };
 
+  // generate natural-looking random heights for each book once
+  useEffect(() => {
+    const minRem = 13; // minimum book height in rem
+    const maxRem = 18; // maximum book height in rem
+    const heights = {};
+    mockBooks.forEach((b) => {
+      const val = (Math.random() * (maxRem - minRem) + minRem).toFixed(2);
+      heights[b.id] = `${val}rem`;
+    });
+    setBookHeights(heights);
+  }, []); // run once on mount
+
+  // show/hide scroll indicator based on page position (and when a book popup is open)
+  useEffect(() => {
+    const checkScroll = () => {
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 48; // 48px threshold
+      setShowScrollIndicator(!atBottom && !selectedBook);
+    };
+
+    // run once to set initial state
+    checkScroll();
+    window.addEventListener("scroll", checkScroll, { passive: true });
+    window.addEventListener("resize", checkScroll);
+    return () => {
+      window.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [selectedBook]);
+
+  const scrollToBottom = () => {
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+  };
+
   return (
     <div className="library-container">
       {/* Header */}
@@ -176,13 +213,16 @@ export default function Library() {
                 >
                   <div
                     className="book-spine-inner"
-                    style={{ backgroundColor: book.color }}
+                    style={{
+                      backgroundColor: book.color,
+                      height: bookHeights[book.id] || "16rem", // fallback
+                    }}
                   >
-                    <p className="book-spine-title">{book.title}</p>
-                    <div className="book-glow" />
-                  </div>
-                </div>
-              ))}
+                   <p className="book-spine-title">{book.title}</p>
+                   <div className="book-glow" />
+                 </div>
+               </div>
+             ))}
             </div>
 
             {/* Bottom Shelf */}
@@ -195,19 +235,14 @@ export default function Library() {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="scroll-indicator">
-        <p className="scroll-text">Scroll for more books</p>
-        <svg
-          className="scroll-arrow"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+      <div
+        className={`scroll-indicator ${!showScrollIndicator ? "hidden" : ""}`}
+        onClick={scrollToBottom}
+        role="button"
+        aria-label="Scroll to bottom"
+      >
+        <div className="scroll-text">More books</div>
+        <div className="scroll-arrow">↓</div>
       </div>
 
       {/* Book Popup */}
