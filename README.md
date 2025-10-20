@@ -8,7 +8,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **SideQuest** is an interactive storytelling platform where kids co-create stories with AI — writing new lines, visualizing them with generated images, and branching their stories into infinite creative paths.  
-Built with a **Django backend**, **React frontend**, and powered by the **Google Gemini API** for text and image generation.
+Built with a **Django backend**, **React frontend**, a **PostgreSQL database** for story storage and branching, and powered by the **Google Gemini API** for text and image generation.
+
 
 ---
 
