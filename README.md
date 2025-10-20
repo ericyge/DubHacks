@@ -158,7 +158,6 @@ python ./manage.py runserver
 
 - Add user authentication and profiles (save stories by user)  
 - Enable collaborative storytelling between multiple users  
-
 - Improve scalability for branching story storage (graph-based DB)  
 - Integrate background music and narration for immersive reading  
 - Parental dashboard for monitoring and feedback  
@@ -176,6 +175,6 @@ Experiment with additional models (OpenAI GPT, Stability AI, or Gemini Vision) t
 ---
 
 ## 👨‍💻 Author:
--Developed by Eric Ge, Shaurya Malhotra, Tom Jacobs, Akshay Nair
--Features: interactive storytelling, AI image generation, and branching creativity for kids.
+- Developed by Eric Ge, Shaurya Malhotra, Tom Jacobs, Akshay Nair
+- Features: interactive storytelling, AI image generation, and branching creativity for kids.
 
