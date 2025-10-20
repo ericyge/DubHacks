@@ -106,7 +106,7 @@ Built with a **Django backend**, **React frontend**, and powered by the **Google
   ~DubHacks\venv\Scripts\Activate.ps1
   ```
 
-2. Install dependencies:
+3. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
