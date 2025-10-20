@@ -107,9 +107,9 @@ Built with a **Django backend**, **React frontend**, and powered by the **Google
   ```
 
 3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+  ```bash
+  pip install -r requirements.txt
+  ```
 
 ### 2️⃣ Running Backend and Frontend
 **Run Frontend**
