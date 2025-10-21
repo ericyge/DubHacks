@@ -176,6 +176,6 @@ Experiment with additional models (OpenAI GPT, Stability AI, or Gemini Vision) t
 ---
 
 ## 👨‍💻 Author:
-- Developed by Eric Ge, Shaurya Malhotra, Tom Jacobs, Akshay Nair
+- Developed by Eric Ge, Shaurya Malhotra, Tom Jacob, Akshay Nair
 - Features: interactive storytelling, AI image generation, and branching creativity for kids.
 
